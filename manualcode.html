@@ -1,0 +1,1195 @@
+--- START OF FILE modelo.html ---
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcana - Manual do Jogador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS for sections that need more specific styling */
+        .card-type-overview {
+            transition: all 0.3s ease;
+        }
+        .card-type-overview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar {
+            scrollbar-width: thin;
+            scrollbar-color: #4B5563 #1F2937;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #1F2937;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #4B5563;
+            border-radius: 4px;
+        }
+        .active-section {
+            border-left: 4px solid #F59E0B;
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+         .sidebar a.active-section {
+            /* Ensure active section styles apply to the anchor tag */
+            border-left: 4px solid #F59E0B;
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        .placeholder-img {
+            background: linear-gradient(135deg, #6B7280 0%, #9CA3AF 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            min-height: 100px; /* Ensure visibility even if grid makes it small */
+        }
+        details summary {
+            cursor: pointer;
+            list-style: none; /* Remove default arrow */
+        }
+         details summary::-webkit-details-marker {
+            display: none; /* Remove default arrow for webkit */
+        }
+        details summary::before {
+            content: '\f0d7'; /* FontAwesome chevron-down */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] summary::before {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-dice-d20 text-3xl text-yellow-500"></i>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Arcana</h1>
+                <span class="text-sm text-gray-400">Manual do Jogador</span>
+            </div>
+            <div class="hidden md:flex space-x-4">
+                 <button class="px-3 py-2 rounded hover:bg-gray-700 transition" id="searchBtn">
+                    <i class="fas fa-search mr-2"></i>Buscar
+                </button>
+                <!-- Future features -->
+                <!-- <button class="px-3 py-2 rounded hover:bg-gray-700 transition">
+                    <i class="fas fa-bookmark mr-2"></i>Favoritos
+                </button>
+                <button class="px-3 py-2 rounded bg-yellow-600 hover:bg-yellow-700 transition">
+                    <i class="fas fa-download mr-2"></i>PDF
+                </button> -->
+            </div>
+            <button class="md:hidden text-2xl" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Buscar no Manual</h3>
+                <button id="closeSearchModal" class="text-2xl text-gray-400 hover:text-gray-100">&times;</button>
+            </div>
+            <div class="relative">
+                <input type="text" placeholder="Digite termos como 'Ações', 'Combate', 'Classes'..."
+                       class="w-full bg-gray-700 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-100">
+                <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+            </div>
+            <div class="mt-4 text-gray-400">
+                <p>Exemplo: "Como funcionam os turnos?", "Carta de Habilidade", "Progressão de nível"</p>
+            </div>
+        </div>
+    </div>
+
+     <!-- Mobile Menu (Placeholder/Alternative Nav) -->
+    <div id="mobileMenu" class="fixed inset-0 bg-gray-900 z-40 hidden overflow-y-auto pt-20 px-4">
+         <div class="space-y-2">
+             <!-- This could be a simplified list or match the sidebar structure -->
+             <a href="#introducao" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Introdução</a>
+             <a href="#visao-geral" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Visão Geral</a>
+             <a href="#preparacao" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Preparação do Jogo</a>
+             <a href="#turnos-acoes" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Turnos e Ações</a>
+             <a href="#cartas" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Cartas do Jogo</a>
+             <a href="#experiencia-progressao" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Experiência e Progressão</a>
+             <a href="#atributos" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Atributos</a>
+             <a href="#condicoes" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Condições</a>
+             <a href="#combate" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Combate</a>
+             <a href="#comportamento-monstros" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Comportamento dos Monstros</a>
+             <a href="#morte" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Morte</a>
+             <a href="#classes" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Classes</a>
+             <a href="#glossario" class="block w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700">Glossário</a>
+         </div>
+     </div>
+
+    <!-- Main Content -->
+    <div class="flex flex-1">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden lg:block w-64 bg-gray-800 border-r border-gray-700 sidebar overflow-y-auto h-[calc(100vh-73px)] sticky top-[73px]">
+            <div class="p-4">
+                <h2 class="font-bold text-lg mb-4 text-yellow-400 flex items-center">
+                    <i class="fas fa-list-ul mr-2"></i> Sumário
+                </h2>
+                <nav class="space-y-1">
+                    <a href="#introducao" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Introdução</a>
+                    <a href="#visao-geral" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Visão Geral do Jogo</a>
+                    <a href="#preparacao" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Preparação do Jogo</a>
+                    <a href="#turnos-acoes" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Turnos e Ações</a>
+
+                    <!-- Cartas Submenu -->
+                    <details class="group" id="cards-details">
+                        <summary class="w-full text-left px-3 py-2 rounded flex items-center justify-between hover:bg-gray-700 hover:text-yellow-400 text-sm">
+                            Cartas do Jogo
+                        </summary>
+                        <div class="ml-4 mt-1 space-y-1">
+                            <a href="#cartas-habilidade" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Habilidade</a>
+                            <a href="#cartas-postura" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Postura</a>
+                             <a href="#cartas-cenario" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Cenário</a>
+                            <a href="#cartas-desafio" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Desafio</a>
+                             <a href="#cartas-objetivos" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Objetivos</a>
+                            <a href="#cartas-especiais" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas Especiais</a>
+                        </div>
+                    </details>
+
+                    <a href="#experiencia-progressao" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Experiência e Progressão</a>
+                    <a href="#atributos" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Atributos</a>
+                    <a href="#condicoes" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Condições</a>
+                    <a href="#combate" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Combate</a>
+                     <a href="#comportamento-monstros" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Comportamento dos Monstros</a>
+                     <a href="#morte" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Morte</a>
+
+                    <!-- Classes Submenu -->
+                     <details class="group" id="classes-details">
+                        <summary class="w-full text-left px-3 py-2 rounded flex items-center justify-between hover:bg-gray-700 hover:text-yellow-400 text-sm">
+                            Classes
+                        </summary>
+                        <div class="ml-4 mt-1 space-y-1">
+                            <a href="#magos" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Magos</a>
+                            <a href="#bruxos" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Bruxos</a>
+                            <a href="#feiticeiros" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Feiticeiros</a>
+                            <a href="#alquimistas" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Alquimistas</a>
+                             <a href="#xamas" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Xamãs</a>
+                             <a href="#monges" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Monges</a>
+                        </div>
+                    </details>
+
+                    <a href="#glossario" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Glossário e Palavras-Chave</a>
+                </nav>
+            </div>
+
+            <!-- Quick Links - Can be adapted from manual content if any are implied -->
+            <!-- For now, keeping placeholder structure -->
+            <div class="p-4 border-t border-gray-700 mt-4">
+                <h3 class="font-bold text-sm uppercase text-gray-400 mb-2">Recursos Úteis</h3>
+                <div class="space-y-2">
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                        <i class="fas fa-dice mr-2 text-yellow-500"></i> Exemplo de Combate
+                    </a>
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                         <i class="fas fa-info-circle mr-2 text-yellow-500"></i> Detalhes de Condições (Capítulo fut.)
+                     </a>
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                        <i class="fas fa-calculator mr-2 text-yellow-500"></i> Calculadora de IS (Feiticeiro)
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6">
+            <!-- Breadcrumbs - Placeholder -->
+            <div class="text-sm text-gray-400 mb-6 flex items-center space-x-2">
+                <a href="#" class="hover:text-yellow-400">Início</a>
+                <span>/</span>
+                <span>Manual do Jogador</span>
+            </div>
+
+            <!-- Page Title -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Manual do Jogador</h1>
+                <p class="text-gray-400">Bem-vindo ao mundo de Arcana! Este manual tem como objetivo explicar detalhadamente as regras do jogo, ajudando você a mergulhar nessa experiência única de estratégia.</p>
+            </div>
+
+            <!-- Introduction Section -->
+            <section id="introducao" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-book-open mr-2"></i> Introdução
+                    </h2>
+                    <p class="mb-4">Bem-vindo ao mundo de Arcana! Este manual tem como objetivo explicar detalhadamente as regras do jogo, ajudando você a mergulhar nessa experiência única de estratégia. Aqui, você irá compreender melhor como funciona cada tipo de carta, as classes e o sistema de combate único e simplificado.</p>
+                </div>
+            </section>
+
+             <!-- Visão Geral do Jogo Section -->
+            <section id="visao-geral" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-compass mr-2"></i> Visão Geral do Jogo
+                    </h2>
+                    <p class="mb-4">Em Arcana, os jogadores assumem o papel de heróis que exploram cenários, enfrentam desafios e usam habilidades únicas para alcançar objetivos. O jogo combina estratégia, combate simplificado e progressão de personagens, oferecendo uma experiência dinâmica a cada partida.</p>
+                    <p class="mb-4">Antes de começar, cada jogador deve escolher um herói e preparar seu deck de cartas. Os decks dos jogadores são compostos por cartas de habilidade e cartas de postura, criando uma dinâmica de sinergia entre elas. As cartas de cenário e cartas de desafio são usadas para criar o ambiente de jogo, enquanto as cartas de objetivo definem as condições de vitória.</p>
+                    <p class="mb-4">O jogo é dividido em turnos, onde cada jogador realiza duas ações, como atacar, usar habilidades, explorar cenários ou mudar de postura.</p>
+                    <p class="mb-4">Nas próximas seções, você encontrará explicações detalhadas sobre os tipos de cartas, como funcionam os combates, a progressão dos heróis e a dinâmica do jogo.</p>
+                </div>
+            </section>
+
+             <!-- Preparação do Jogo Section -->
+             <section id="preparacao" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-tools mr-2"></i> Preparação do Jogo
+                     </h2>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Escolha dos Heróis</h3>
+                         <p class="mb-4">Cada herói pertence a uma classe específica, dentre as <strong>6 classes padrão</strong> do jogo. Além das habilidades específicas do herói, definidas por suas cartas de habilidade, ele também obedece a algumas premissas de sua classe, como a definição de seus atributos (básicos e secundários), sua relação com as cartas de postura etc.</p>
+                         <p class="mb-4">Escolher um herói pode significar se aprofundar na história dele e criar uma narrativa própria para o contexto do jogo, mas também pode se pautar apenas por características objetivas de combate e utilidade.</p>
+                         <p class="mb-4">As <strong>cartas de habilidade</strong> fazem parte do conjunto inicial de cada herói. Já as <strong>cartas de postura</strong>, com exceções, pertencem a um conjunto universalizado, em que todos têm acesso às mesmas.</p>
+                     </div>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Níveis e quantidade de cartas</h3>
+                         <p class="mb-4">Ao selecionar suas cartas, o jogador deverá levar em conta: o <strong>nível</strong> em que está iniciando e as cartas correspondentes. Além disso, todos os heróis, sem exceção, carregam não mais e nem menos do que <strong>30 cartas de habilidade</strong>; já a quantidade de cartas de postura é definida pela classe à qual o herói pertence.</p>
+                     </div>
+
+                      <div class="mb-6">
+                          <h3 class="text-xl font-bold mb-3 text-yellow-300">Separação dos Decks</h3>
+                          <p class="mb-4">Cada jogador coloca à sua frente, devidamente embaralhadas, as cartas de habilidade (enfatizando: 30 ao todo) e as cartas de postura (quantidade definida pela classe); estas cartas são previamente selecionadas, de acordo com o nível do jogador, que corresponderá ao nível das cartas, iniciando pelo nível 0 (zero).</p>
+                      </div>
+                 </div>
+             </section>
+
+            <!-- Turnos e Ações Section -->
+            <section id="turnos-acoes" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-redo mr-2"></i> Turnos e Ações
+                     </h2>
+                     <p class="mb-4">Cada turno oferece duas ações por jogador, que podem ser:</p>
+                     <ol class="list-decimal pl-5 space-y-2 mb-6">
+                         <li><strong>Atacar</strong>, usando os valores da carta de postura e eventuais bônus;</li>
+                         <li><strong>Usar Habilidade</strong> da mesa ou da mão;</li>
+                         <li><strong>Comprar uma carta de cenário</strong>, apenas uma vez por turno, se o cenário atual permitir;</li>
+                         <li><strong>Entrar em uma sala</strong>, desde que não tenha sido o próprio jogador que acabou de comprar e posicionar a carta (nesse caso, isso não conta como uma nova ação);</li>
+                         <li><strong>Trocar a Carta de postura</strong>.</li>
+                     </ol>
+                     <p class="mb-4">Monstros não saem de suas salas e, exceto alguns chefes, têm apenas uma ação por turno, normalmente definida por: <strong>Atacar</strong>.</p>
+                     <p>O significado de cada uma das ações do jogo, assim como o comportamento dos monstros e a diferença entre sala e cenário serão mais bem compreendidos ao longo das seções deste Manual, mas é importante ter as informações acima de antemão.</p>
+                 </div>
+             </section>
+
+            <!-- As Cartas do Jogo Section -->
+             <section id="cartas" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-6 text-yellow-400 flex items-center">
+                         <i class="fas fa-clone mr-2"></i> As Cartas do Jogo
+                     </h2>
+
+                     <p class="mb-6">Nas subseções a seguir, a descrição de todos os tipos de carta¹, seu uso e descarte.</p>
+
+                     <!-- Cartas de Habilidade -->
+                     <div id="cartas-habilidade" class="mb-8 scroll-mt-20">
+                         <div class="flex items-center mb-4">
+                             <div class="bg-yellow-600 p-2 rounded-lg mr-3">
+                                 <i class="fas fa-scroll text-xl"></i>
+                             </div>
+                             <h3 class="text-xl font-bold text-yellow-300">Cartas de Habilidade</h3>
+                         </div>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                             <div>
+                                 <ul class="list-disc pl-5 space-y-3 mb-4">
+                                     <li>Ao posicionar o seu deck, os jogadores compram as 5 primeiras cartas de cima e permanecem com elas na mão² até o seu turno.</li>
+                                     <li>Durante o turno, uma vez para cada ação, as cartas que estiverem na mão poderão ser colocadas sobre a mesa, passando a ser consideradas em uso³.</li>
+                                     <li>Uma vez em uso, assume-se que os efeitos da carta estão ativos, exceto se o jogador declarar, de maneira clara e objetiva, que deixará de usar um ou mais dos efeitos da carta.</li>
+                                     <li>Todas as cartas de habilidade trazem regras de descarte, seja no início do próximo turno, no final do turno etc., caso essa informação não conste, a regra geral de descarte para elas é: "descarte após o uso”, o que significa dizer que, colocada na mesa e terminado o turno, ela vai para o descarte.</li>
+                                     <li>A mão de cada jogador sempre iniciará e terminará seu turno com 5 cartas de habilidade, sem limite para cartas em uso, exceto se a carta de postura tiver alguma orientação diferente.</li>
+                                      <li>Terminado o turno, ele deverá comprar de seu deck as cartas necessárias para completar a mão.</li>
+                                     <li>Uma vez que a pilha de cartas de habilidade disponíveis termine, o jogador deverá, no começo de seu turno, embaralhar as cartas descartadas, podendo juntar a elas as cartas que ainda estiverem em uso.</li>
+                                 </ul>
+                                  <p class="text-sm italic text-gray-400">¹ As cartas de heróis (habilidade e postura) não são numeradas, enquanto as cartas de jogo têm uma numeração de referência, prevendo futuras expansões.</p>
+                                 <p class="text-sm italic text-gray-400">² Cartas na mão podem ser usadas a qualquer momento, durante o turno do jogador, desde que se obedeça eventuais restrições descritas na carta. Ex.: "Use após descartar outra carta de habilidade".</p>
+                                 <p class="text-sm italic text-gray-400">³ As cartas de habilidade que estiverem sobre a mesa podem ser usadas pelos jogadores/heróis, como uma de suas ações padrão.</p>
+                             </div>
+                              <div class="placeholder-img rounded-lg h-full">
+                                  [IMAGEM: CARTA DE HABILIDADE GENÉRICA]
+                                  <br/>
+                                  <span class="text-xs">Page 2 image reference</span>
+                              </div>
+                         </div>
+                          <h4 class="font-bold text-lg mb-4 text-yellow-300">Exemplos de Cartas de Habilidade</h4>
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: NEVASCA (MAGIA)]
+                                   <br/><span class="text-xs">Page 13 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: ESPELHO DISTORCIDO II (ENCANTAMENTO)]
+                                    <br/><span class="text-xs">Page 13 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: DISPERSAR MALDADE (FEITIÇO)]
+                                    <br/><span class="text-xs">Page 13 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: COQUETEL EXPLOSIVO (POÇÃO)]
+                                    <br/><span class="text-xs">Page 13 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: BORBOLETA PÚRPURA (MAGIA DA NATUREZA)]
+                                    <br/><span class="text-xs">Page 14 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: TESOURO ARCANO (MANTRA)]
+                                    <br/><span class="text-xs">Page 14 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: VENTO GÉLIDO (MAGIA)]
+                                    <br/><span class="text-xs">Page 14 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: ESPELHO DISTORCIDO (ENCANTAMENTO)]
+                                    <br/><span class="text-xs">Page 14 image</span>
+                               </div>
+                           </div>
+                     </div>
+
+                     <!-- Cartas de Postura -->
+                     <div id="cartas-postura" class="mb-8 scroll-mt-20">
+                         <div class="flex items-center mb-4">
+                             <div class="bg-blue-600 p-2 rounded-lg mr-3">
+                                 <i class="fas fa-shield-alt text-xl"></i>
+                             </div>
+                             <h3 class="text-xl font-bold text-blue-300">Cartas de Postura</h3>
+                         </div>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                 <ul class="list-disc pl-5 space-y-3 mb-4">
+                                     <li>O jogador prepara o seu deck, respeitando o limite de cartas da sua classe e o nível de cada carta.</li>
+                                     <li>Após o embaralhamento, o jogador vira a carta do topo, que passa a ser a carta de postura do herói.</li>
+                                     <li>Em seu turno, ele poderá substituir a carta atual por uma nova, colocando-a sobre a anterior (o que ficar abaixo é considerado descarte). Isto conta como uma ação!</li>
+                                     <li>Tudo o que estiver descrito na nova carta de posturas deve ser obedecido imediatamente e todos os efeitos da anterior cessarão.</li>
+                                     <li>Todas as classes, exceto os feiticeiros, usam cartas deste deck universal.</li>
+                                     <li>Para não restarem dúvidas: apenas uma carta de postura pode estar ativa por vez.</li>
+                                 </ul>
+                            </div>
+                             <div class="placeholder-img rounded-lg h-full">
+                                 [IMAGEM: CARTA DE POSTURA GENÉRICA]
+                                 <br/><span class="text-xs">Page 3 image reference</span>
+                             </div>
+                         </div>
+                         <h4 class="font-bold text-lg mb-4 text-blue-300">Exemplos de Cartas de Postura</h4>
+                           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                               <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: CAMPO DE FORÇA (NÍVEL 0)]
+                                    <br/><span class="text-xs">Page 15 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: CLARIVIDÊNCIA (NÍVEL 0)]
+                                    <br/><span class="text-xs">Page 15 image</span>
+                               </div>
+                                <div class="placeholder-img rounded-lg h-64">
+                                   [IMAGEM: INCÊNDIO (NÍVEL 0)]
+                                    <br/><span class="text-xs">Page 15 image</span>
+                               </div>
+                           </div>
+                     </div>
+
+                      <!-- Cartas de Cenário -->
+                    <div id="cartas-cenario" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-map text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-green-300">Cartas de Cenário</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <p class="mb-4">As cartas de cenário definem os ambientes explorados pelos heróis, incluindo salas, com suas respectivas portas, e eventuais regras de cenário.</p>
+                                <ul class="list-disc pl-5 space-y-3 mb-4">
+                                    <li>No começo da partida, o primeiro jogador irá posicionar uma carta de cenário do baralho correspondente, no centro da mesa; nenhuma nova carta de cenário poderá ser comprada até que o primeiro cenário seja concluído.</li>
+                                    <li>Cada carta de cenário pode ter uma ou duas salas, com pelo menos uma porta em sua borda, que poderá ser conectada a outra sala.</li>
+                                    <li>Uma porta é um elemento gráfico presente na carta; dependendo da sua localização, será possível “encaixar" outra carta de cenário, sem jamais sobrepor cartas.</li>
+                                    <li>Além das salas e portas, a carta de cenário poderá conter:
+                                        <ul class="list-circle pl-5 mt-1 space-y-1">
+                                            <li>Regras de Cenário (que podem incluir condições para vencer o cenário ou para sair dele);</li>
+                                            <li>Monstros Específicos, substituindo a carta de desafios;</li>
+                                        </ul>
+                                    </li>
+                                    <li>Assim que o primeiro cenário for concluído, o próximo jogador poderá comprar uma carta de cenário (que deverá servir), iniciando um novo ciclo de caçada aos monstros.</li>
+                                    <li>Conforme o andamento da partida, novos cenários poderão ser abertos, respeitando o limite de 3 salas não concluídas.</li>
+                                    <li>No seu turno, o jogador irá utilizar uma de suas duas ações para abrir uma sala, comprando uma carta de cenário e conectando as portas entre elas.</li>
+                                    <li>Uma colocado em jogo um novo cenário, o herói passará imediatamente para a outra sala, ficando impedido de voltar no mesmo turno.</li>
+                                     <li>Os heróis podem transitar entre salas adjacentes, uma vez por turno, o que conta como uma ação.</li>
+                                 </ul>
+                                  <div class="bg-gray-700 p-4 rounded-lg mt-4">
+                                      <h4 class="font-bold text-green-300 mb-2">E se a carta não servir?</h4>
+                                      <ul class="list-disc pl-5 space-y-2">
+                                          <li>Caso a carta de cenário comprada pelo jogador não possa ser conectada a nenhuma porta, sem sobrepor cartas, ele ficará com a carta para si e sua ação estará encerrada.</li>
+                                          <li>Em um turno posterior, se houver espaço para conectar a carta, ele poderá utilizá-la, sem a necessidade de comprar uma nova.</li>
+                                          <li>Um jogador só pode carregar uma carta de cenário por vez e isto não interfere no número de cartas de habilidade na mão.</li>
+                                           <li>É possível "blefar", sem mostrar a carta para os demais, já que algumas cartas de cenário podem ser úteis para o objetivo do jogador (vide seção Cartas de Objetivo).</li>
+                                      </ul>
+                                  </div>
+                            </div>
+                             <div class="placeholder-img rounded-lg h-full">
+                                 [IMAGEM: CARTA DE CENÁRIO GENÉRICA]
+                                  <br/><span class="text-xs">Page 3 image reference</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Cartas de Desafio -->
+                    <div id="cartas-desafio" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-red-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-skull text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-red-300">Cartas de Desafio</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <ul class="list-disc pl-5 space-y-3 mb-4">
+                                    <li>Como todos os outros decks, este fica disposto em um lugar acessível a todos os jogadores, com as cartas viradas para baixo, com sua pilha de descarte ao lado dele.</li>
+                                    <li>Contudo, diferentemente das outras, estas são as únicas cartas do jogo numeradas no verso, devendo ser utilizadas com seu nível respeitando a média do nível dos jogadores, arredondada para baixo⁴.</li>
+                                    <li>Toda vez que um jogador comprar uma carta de cenário, ele também comprará uma carta de desafio, que deverá conter:
+                                         <ul class="list-circle pl-5 mt-1 space-y-1">
+                                             <li><strong>Maldições:</strong> Incomuns, estas cartas amaldiçoam o herói cujo jogador comprou a carta (às vezes, todo o grupo), com restrições e penalidades temporárias, o que inclui condições (como envenenamento ou atordoamento).</li>
+                                             <li><strong>Bênçãos:</strong> Mais raras, estas cartas de desafios beneficiam o usuário que abrir a carta com vantagens de experiência, de utilidade, defesa ou ataque.</li>
+                                             <li><strong>Monstro Padrão:</strong> Oponentes comuns, presente na grande maioria dos desafios.</li>
+                                             <li><strong>Monstro Elite:</strong> Força intermediária, aparecem em cartas de desafio de níveis maiores.</li>
+                                             <li><strong>Chefes:</strong> podem estar em cartas de cenários, mas também aparecem em desafios de nível 6 (neste caso, são bem mais fortes).</li>
+                                         </ul>
+                                     </li>
+                                </ul>
+                                 <p class="text-sm italic text-gray-400">⁴ Se os jogadores desejarem, eles podem adicionar um nível maior de desafio, arredondando o nível para cima ou mesmo misturando algumas cartas do nível posterior. A experiência ganha pelos monstros será correspondente.</p>
+                            </div>
+                             <div class="placeholder-img rounded-lg h-full">
+                                [IMAGEM: CARTA DE DESAFIO GENÉRICA (COM NÚMERO)]
+                                 <br/><span class="text-xs">Page 4 image reference</span>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Cartas de Objetivos -->
+                     <div id="cartas-objetivos" class="mb-8 scroll-mt-20">
+                         <div class="flex items-center mb-4">
+                             <div class="bg-purple-600 p-2 rounded-lg mr-3">
+                                 <i class="fas fa-trophy text-xl"></i>
+                             </div>
+                             <h3 class="text-xl font-bold text-purple-300">Cartas de Objetivos</h3>
+                         </div>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                             <div>
+                                 <ul class="list-disc pl-5 space-y-3 mb-4">
+                                     <li>Estas cartas não devem ser reveladas aos outros jogadores.</li>
+                                     <li>Elas contêm as condições de vitória, que podem ser as mais variadas.</li>
+                                     <li>No começo da partida, antes de organizarem seus decks, os jogadores retiram uma carta de objetivos.</li>
+                                     <li>Cabe ao jogador anunciar que conquistou seu objetivo e é muito importante ter clareza sobre o que a carta está pedindo, para evitar frustrações.</li>
+                                      <li>Outras condições de vitória podem ser estabelecidas no começo da partida, assim como o jogo pode se tornar exclusivamente colaborativo</li>
+                                 </ul>
+                             </div>
+                              <div class="placeholder-img rounded-lg h-full">
+                                 [IMAGEM: CARTA DE OBJETIVO GENÉRICA]
+                                  <br/><span class="text-xs">Page 4 image reference</span>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Cartas Especiais -->
+                     <div id="cartas-especiais" class="scroll-mt-20">
+                         <div class="flex items-center mb-4">
+                             <div class="bg-teal-600 p-2 rounded-lg mr-3">
+                                 <i class="fas fa-star text-xl"></i>
+                             </div>
+                             <h3 class="text-xl font-bold text-teal-300">Cartas Especiais</h3>
+                         </div>
+                         <p class="mb-4">Algumas cartas de habilidade e cartas de postura podem ser adicionadas ao conjunto do herói, ao custo de experiência. Estas cartas só estão disponíveis em níveis mais altos. A descrição de como são adquiridas pode ser entendida no final da seção Experiência e Progressão, em Renúncia de Experiência.</p>
+                         <p class="text-sm italic text-gray-400">⁵ As cartas especiais exigem maior conhecimento do jogo e, portanto, experiência do jogador, não apenas do herói.</p>
+                     </div>
+                 </div>
+             </section>
+
+            <!-- Experiência e Progressão Section -->
+             <section id="experiencia-progressao" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-chart-line mr-2"></i> Experiência e Progressão
+                     </h2>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Adquirindo Experiência</h3>
+                         <p class="mb-4">Há duas formas básicas de se adquirir experiência:</p>
+                         <ul class="list-disc pl-5 space-y-1">
+                             <li>Concluindo desafios e cenários</li>
+                             <li>Usando habilidades</li>
+                         </ul>
+                     </div>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Experiência por Desafio</h3>
+                          <ul class="list-disc pl-5 space-y-2">
+                              <li>Ao concluir um desafio (ex.: matar um monstro), os heróis que participaram do combate ou da execução da tarefa dividirão a experiência descrita na carta igualmente.</li>
+                              <li>Caso um herói tenha aberto uma sala e não tenha as condições necessárias para cumprir o desafio, ele pode pedir ajuda e negociar o ganho de experiência com outro herói; tudo deverá ser declarado antes ou a experiência será dividida igualmente.</li>
+                          </ul>
+                     </div>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Experiência por Habilidade</h3>
+                         <p>Algumas habilidades e efeitos de habilidade indicam valores de experiência em seu uso, cumprindo determinados requisitos ou no uso combinado com outras habilidades, posturas etc., neste caso, não há compartilhamento de experiência.</p>
+                     </div>
+
+                      <div class="mb-6">
+                          <h3 class="text-xl font-bold mb-3 text-yellow-300">Experiência total necessária para alcançar cada nível</h3>
+                          <p class="mb-4">Ao adquirir experiência, o herói poderá subir para o próximo nível (ver tabela 1). Quanto mais heróis em uma partida, mais rápida será a progressão de cada nível.</p>
+                           <div class="overflow-x-auto">
+                               <table class="w-full text-left border-collapse">
+                                   <thead>
+                                       <tr class="border-b border-gray-700">
+                                           <th class="py-2 px-4 bg-gray-700">Nível</th>
+                                           <th class="py-2 px-4 bg-gray-700">2 jogadores</th>
+                                           <th class="py-2 px-4 bg-gray-700">3 jogadores</th>
+                                           <th class="py-2 px-4 bg-gray-700">4 jogadores</th>
+                                           <th class="py-2 px-4 bg-gray-700">5 jogadores</th>
+                                           <th class="py-2 px-4 bg-gray-700">6 jogadores</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       <tr class="border-b border-gray-700">
+                                           <td class="py-2 px-4">Nível 0</td>
+                                           <td class="py-2 px-4">0</td>
+                                           <td class="py-2 px-4">0</td>
+                                           <td class="py-2 px-4">0</td>
+                                           <td class="py-2 px-4">0</td>
+                                           <td class="py-2 px-4">0</td>
+                                       </tr>
+                                       <tr class="border-b border-gray-700">
+                                            <td class="py-2 px-4">Nível 1</td>
+                                            <td class="py-2 px-4">120</td>
+                                            <td class="py-2 px-4">110</td>
+                                            <td class="py-2 px-4">100</td>
+                                            <td class="py-2 px-4">90</td>
+                                            <td class="py-2 px-4">80</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="py-2 px-4">Nível 2</td>
+                                            <td class="py-2 px-4">300</td>
+                                            <td class="py-2 px-4">275</td>
+                                            <td class="py-2 px-4">250</td>
+                                            <td class="py-2 px-4">225</td>
+                                            <td class="py-2 px-4">200</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="py-2 px-4">Nível 3</td>
+                                            <td class="py-2 px-4">460</td>
+                                            <td class="py-2 px-4">420</td>
+                                            <td class="py-2 px-4">385</td>
+                                            <td class="py-2 px-4">345</td>
+                                            <td class="py-2 px-4">310</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="py-2 px-4">Nível 4</td>
+                                            <td class="py-2 px-4">600</td>
+                                            <td class="py-2 px-4">550</td>
+                                            <td class="py-2 px-4">495</td>
+                                            <td class="py-2 px-4">450</td>
+                                            <td class="py-2 px-4">400</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="py-2 px-4">Nível 5</td>
+                                            <td class="py-2 px-4">725</td>
+                                            <td class="py-2 px-4">660</td>
+                                            <td class="py-2 px-4">600</td>
+                                            <td class="py-2 px-4">540</td>
+                                            <td class="py-2 px-4">485</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-4">Nível 6</td>
+                                            <td class="py-2 px-4">850</td>
+                                            <td class="py-2 px-4">770</td>
+                                            <td class="py-2 px-4">700</td>
+                                            <td class="py-2 px-4">630</td>
+                                            <td class="py-2 px-4">565</td>
+                                        </tr>
+                                   </tbody>
+                               </table>
+                           </div>
+                           <p class="text-sm mt-2 text-gray-400">Tabela 1 - Experiência por nível</p>
+                       </div>
+
+                     <div id="renuncia-experiencia" class="mb-6 scroll-mt-20">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Renúncia de Experiência</h3>
+                         <p class="mb-4">Além disso, a experiência é a única “moeda” do jogo. Algumas cartas de habilidade e cartas de postura só podem ser adquiridas dessa maneira. Ao fazer isso, o jogador renuncia à experiência adquirida dentro do nível. A partir do nível 6, toda a experiência adquirida servirá apenas a este propósito.</p>
+                          <p class="italic text-gray-400">Obs.: Não é permitido perder níveis para renunciar experiência.</p>
+                     </div>
+
+                      <div id="regras-especiais-cartas" class="scroll-mt-20">
+                          <h3 class="text-xl font-bold mb-3 text-yellow-300">Regras Especiais das Cartas</h3>
+                          <ul class="list-disc pl-5 space-y-3">
+                              <li>As <strong>cartas de habilidade</strong> prevalecem sobre as <strong>cartas de postura</strong>.
+                                  <ul class="list-circle pl-5 mt-1 space-y-1">
+                                      <li>Exemplo: Uma carta de postura pode indicar Ataque 2, mas se a carta de habilidade indicar Ataque 3, (em vez de um bônus de Ataque +1) esta prevalecerá.</li>
+                                  </ul>
+                              </li>
+                              <li>O jogador pode optar por <strong>não usar</strong> todos os efeitos de uma carta de habilidade, mas deve declarar isso ao jogar.</li>
+                              <li>Se o efeito da carta de postura for mais forte que o da habilidade, o jogador pode ignorar o efeito mais fraco, mas também deverá declarar.</li>
+                          </ul>
+                      </div>
+
+                 </div>
+             </section>
+
+            <!-- Atributos Section -->
+             <section id="atributos" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-star-half-alt mr-2"></i> Atributos
+                     </h2>
+                     <p class="mb-4">Os heróis possuem atributos divididos entre <strong>básicos</strong> e <strong>secundários</strong>:</p>
+
+                     <div class="mb-6">
+                         <h3 class="text-xl font-bold mb-3 text-yellow-300">Atributos Básicos</h3>
+                         <ul class="list-disc pl-5 space-y-2">
+                             <li><strong>Ataque:</strong> Determina o poder de ataque.</li>
+                             <li><strong>Defesa:</strong> Reduz o dano recebido.</li>
+                             <li><strong>Vida:</strong> A Vida máxima de cada herói é definida pela classe e pelo nível.</li>
+                             <li><strong>Experiência (XP):</strong> Usada para subir de nível e desbloquear novas cartas.</li>
+                         </ul>
+                     </div>
+
+                      <div class="mb-6">
+                          <h3 class="text-xl font-bold mb-3 text-yellow-300">Atributos Secundários</h3>
+                          <ul class="list-disc pl-5 space-y-2">
+                              <li><strong>Bônus de Ataque:</strong> Adiciona valor extra ao ataque.</li>
+                              <li><strong>Modificador de Ataque:</strong> Substitui temporariamente o valor base de Ataque.</li>
+                              <li><strong>Bônus de Defesa:</strong> Aumenta a redução de dano por ataque.</li>
+                              <li><strong>Modificador de Defesa:</strong> Substitui temporariamente o valor base de Defesa.</li>
+                              <li><strong>Dano⁶:</strong> É o valor a ser subtraído da Vida do alvo após o cálculo de combate.</li>
+                              <li><strong>Escudo:</strong> Vida temporária que absorve dano antes de afetar a vida principal.</li>
+                              <li><strong>Outros Bônus Temporários:</strong> Variam conforme cartas jogadas.</li>
+                          </ul>
+                           <p class="text-sm italic text-gray-400 mt-2">⁶ Algumas habilidades causam <strong>Dano</strong> diretamente à vida do alvo, ignorando as defesas. Quando esta palavra estiver na descrição da carta, é disso que se trata. Do contrário, haveria dizeres como Ataque, bônus de ataque etc.</p>
+                      </div>
+                 </div>
+             </section>
+
+             <!-- Condições Section -->
+             <section id="condicoes" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-thermometer-half mr-2"></i> Condições
+                     </h2>
+                     <p class="mb-4">Condições afetam heróis, lacaios e monstros, adicionando desafios e modificadores⁷.</p>
+                      <ul class="list-disc pl-5 space-y-2 mb-6">
+                          <li><strong>Imóvel:</strong> O alvo não pode se mover durante o próximo turno.</li>
+                          <li><strong>Atordoado:</strong> Impede ações no turno, mas mantém eventuais modificadores.</li>
+                          <li><strong>Envenenado:</strong> Aplica dano por turno.</li>
+                          <li><strong>Ferido:</strong> Reduz a Vida máxima temporariamente.</li>
+                          <li><strong>Mudo:</strong> Impede uso de habilidades.</li>
+                          <li><strong>Lento:</strong> Reduz o próximo turno a 1 ação.</li>
+                          <li><strong>Exausto:</strong> Ataque, Defesa e seus bônus são reduzidos a 0 por um turno.</li>
+                      </ul>
+                      <p class="text-sm italic text-gray-400 mt-2">⁷ A descrição completa das condições e suas implicações dentro da partida virá em um capítulo próprio.</p>
+                 </div>
+             </section>
+
+            <!-- Combate Section -->
+            <section id="combate" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-fist-raised mr-2"></i> Combate
+                    </h2>
+                    <p class="mb-4">Os combates são baseados nos atributos de Ataque e Defesa, sem uso de dados ou fichas de combate. O resultado é definido por cálculos simples:</p>
+
+                    <div class="bg-gray-700 p-4 rounded-lg mb-6">
+                        <h3 class="font-bold text-lg mb-2 text-yellow-300">Exemplo de Combate</h3>
+                         <p class="font-semibold mb-2">Atacante:</p>
+                         <ul class="list-disc pl-5 space-y-1 mb-4">
+                             <li>Ataque: 5</li>
+                             <li>Bônus de Ataque: 3</li>
+                         </ul>
+                         <p class="font-semibold mb-2">Defensor:</p>
+                          <ul class="list-disc pl-5 space-y-1 mb-4">
+                              <li>Defesa: 6</li>
+                              <li>Bônus de Defesa: 1</li>
+                          </ul>
+                         <p class="font-semibold mb-2">Cálculo:</p>
+                          <ul class="list-disc pl-5 space-y-1 mb-4">
+                              <li>(Ataque + Bônus de Ataque) - (Defesa + Bônus de Defesa) = Vida perdida</li>
+                              <li>(5 + 3) - (6 + 1) = 1</li>
+                          </ul>
+                         <p class="mb-4">Neste caso, o defensor perde <strong>1 ponto de vida</strong>.</p>
+                          <ul class="list-disc pl-5 space-y-1">
+                              <li>Se o defensor possuir Escudo, o valor é descontado deste bônus primeiro.</li>
+                              <li>Modificadores podem alterar o cálculo, como dobrar o Ataque contra inimigos envenenados, por exemplo.</li>
+                          </ul>
+                    </div>
+
+                     <div id="dano-habilidades" class="scroll-mt-20">
+                         <h3 class="font-bold text-lg mb-2 text-yellow-300">Dano de Habilidades</h3>
+                         <p>O <strong>Dano</strong> causado por habilidades ignora a Defesa do alvo, exceto se a carta modificar o valor base do Ataque ou trouxer um bônus de ataque. Nesse caso, o efeito da carta é meramente uma melhoria de combate.</p>
+                     </div>
+                </div>
+            </section>
+
+            <!-- Comportamento dos Monstros Section -->
+            <section id="comportamento-monstros" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                         <i class="fas fa-paw mr-2"></i> Comportamento dos Monstros
+                     </h2>
+                     <ul class="list-disc pl-5 space-y-3">
+                         <li>Monstros jogam sempre depois de todos os turnos dos heróis, na ordem de sua aparição, mesmo os chefes.</li>
+                         <li>Uma vez que um herói entre em uma sala e se depare com um monstro, ele terá o herói como alvo.</li>
+                         <li>Quando o monstro for atacado, seu alvo mudará para quem o estiver atacando.</li>
+                         <li>Se um herói abrir uma sala, encontrar um monstro e os dois não entrarem em combate, caso um novo herói entre, ele será o alvo do monstro.</li>
+                         <li>Algumas cartas de cenário, de desafio ou a própria ficha do monstro poderão descrever comportamentos diferentes, que irão prevalecer sobre as regras gerais.</li>
+                     </ul>
+                 </div>
+             </section>
+
+             <!-- Morte Section -->
+             <section id="morte" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                          <i class="fas fa-crossbones mr-2"></i> Morte
+                      </h2>
+                      <p>Quando um herói morre, o jogador recolhe todas as suas cartas, embaralha novamente, perde a experiência adquirida no nível atual, perde um nível e o seu próximo turno.</p>
+                  </div>
+             </section>
+
+
+            <!-- Classes Section -->
+            <section id="classes" class="mb-12 scroll-mt-20">
+                 <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                     <h2 class="text-2xl font-bold mb-6 text-yellow-400 flex items-center">
+                         <i class="fas fa-users-cog mr-2"></i> Classes
+                     </h2>
+                     <p class="mb-6">Aqui, apresentaremos as 6 classes do jogo base. Cada uma com suas peculiaridades, elas adicionam dinamismo ao jogo, por sua mecânica única e estratégica.</p>
+
+                     <!-- Magos -->
+                     <div id="magos" class="mb-8 scroll-mt-20">
+                         <div class="flex items-center mb-4">
+                            <div class="bg-blue-600 p-2 rounded-lg mr-3"><i class="fas fa-hat-wizard text-xl"></i></div>
+                             <h3 class="text-xl font-bold text-blue-300">Magos</h3>
+                         </div>
+                          <ul class="list-disc pl-5 space-y-2">
+                              <li>Os Magos precisam <strong>despertar</strong> para o que em Arcana chamamos de <strong>Eu Mágico</strong>, por isso, no começo de cada partida, após comprarem as 5 cartas de habilidade iniciais, e a cada novo nível, eles perderão uma ação do seu próximo turno, descartando todas elas (-1 por nível) e comprando novamente.</li>
+                              <li>No entanto, durante o despertar, eles poderão virar uma nova carta de posturas, sem gastar a outra ação com isso; na prática.</li>
+                              <li>Magos usam <strong>6 cartas de postura</strong> do deck universal.</li>
+                              <li>As habilidades de mago se chamam <strong>magias</strong> e são o único tipo que eles podem utilizar.</li>
+                              <li>Magos têm <strong>cartas de habilidade especiais</strong> (aquelas compradas com experiência) somente no nível 6.</li>
+                              <li>As magias são muito objetivas e bastante sinérgicas entre si.</li>
+                              <li>O conjunto de características do Mago é feito para que o jogador foque na progressão com essa classe.</li>
+                              <li>Vida do Mago: 10, 11, 12, 13, 14, 16, 18 (nos níveis 0 a 6).</li>
+                          </ul>
+                     </div>
+
+                      <!-- Bruxos -->
+                      <div id="bruxos" class="mb-8 scroll-mt-20">
+                           <div class="flex items-center mb-4">
+                              <div class="bg-purple-600 p-2 rounded-lg mr-3"><i class="fas fa-staff-snake text-xl"></i></div>
+                               <h3 class="text-xl font-bold text-purple-300">Bruxos</h3>
+                           </div>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>Os Bruxos são abençoados pela Grande Mãe e têm uma Patronesse como sua mentora espiritual. Por isso, eles são os únicos a terem cartas de postura adicionais ao longo de sua progressão.</li>
+                                <li>Chamadas de <strong>Auxílios</strong>, estas cartas ficam disponíveis nos níveis 1, 3 e 5, sendo 3 novas cartas em cada um desses níveis.</li>
+                                <li>Bruxos usam <strong>6 cartas de postura</strong>, sendo que, além das cartas do deck universal, eles DEVEM utilizar um Auxílio para cada nível que progredirem.</li>
+                                <li>As habilidades de bruxo se chamam <strong>encantamento</strong> e <strong>artefato bruxo</strong> e são os únicos tipos que eles podem utilizar.</li>
+                                <li>Só é possível colocar em uso um artefato por vez, assim:
+                                    <ul class="list-circle pl-5 mt-1 space-y-1">
+                                        <li>Se houver um artefato em uso, o bruxo pode utilizar uma de suas ações para substituí-lo por um da sua mão;</li>
+                                        <li>Descartar o artefato em uso e colocar outro, de sua mão, que passará a ter seus efeitos imediatamente;</li>
+                                        <li>Descartar um artefato da mão e/ou aquele que estiver em uso, utilizando uma ação para cada carta.</li>
+                                    </ul>
+                                </li>
+                                 <li>Bruxos têm <strong>cartas de habilidade especiais</strong> nos níveis 2, 4 e 6.</li>
+                                <li>Encantamentos são mais objetivos, mais parecidos com habilidades de outras classes, já os <strong>artefatos bruxos</strong> costumam funcionar para dar sinergia entre os encantamentos e os Auxílios.</li>
+                                <li>Vida do Bruxo: 12, 13, 14, 15, 16, 17, 18 (nos níveis 0 a 6).</li>
+                            </ul>
+                       </div>
+
+                       <!-- Feiticeiros -->
+                       <div id="feiticeiros" class="mb-8 scroll-mt-20">
+                           <div class="flex items-center mb-4">
+                               <div class="bg-red-600 p-2 rounded-lg mr-3"><i class="fas fa-hand-sparkles text-xl"></i></div>
+                                <h3 class="text-xl font-bold text-red-300">Feiticeiros</h3>
+                           </div>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>Os Feiticeiros, ao contrário dos Magos, precisam controlar o seu Eu Mágico, por isso, suas habilidades podem <strong>sobrecarregar</strong>, adicionando efeitos ou substituindo os originais, conforme a descrição do efeito de sobrecarga presente na própria carta de habilidade.</li>
+                                <li>Feiticeiros <strong>não usam cartas de postura</strong>; por isso, seu Ataque e Defesa base são padronizados por nível.</li>
+                                <li>As habilidades de feiticeiro se chamam <strong>feitiços</strong> e são o único tipo que eles podem utilizar.</li>
+                                <li>Feitiços têm índices de sobrecarga (<strong>IS</strong>). Quando esse valor for ultrapassado (não apenas igualado), a(s) próxima(s) habilidades que o Feiticeiro usar estarão sobrecarregadas.
+                                     <ul class="list-circle pl-5 mt-1 space-y-1">
+                                         <li>O cálculo para a sobrecarga segue a seguinte fórmula: <strong>2 x Nível do Herói + quantidade de feitiços na mão</strong>.</li>
+                                     </ul>
+                                </li>
+                                 <li>Feiticeiros têm <strong>cartas de habilidade especiais</strong> em todos os níveis, a partir do 1.</li>
+                                <li>Feitiços são razoavelmente simples, mas suas sobrecargas, apesar de muito fortes, se bem utilizadas, são muito difíceis de controlar.</li>
+                                <li>Ataque do Feiticeiro: 2, 2, 3, 3, 4, 5, 6 (nos níveis 0 a 6).</li>
+                                <li>Defesa do Feiticeiro: 2, 2, 2, 3, 3, 4, 4 (nos níveis 0 a 6).</li>
+                                <li>Vida do Feiticeiro: 12, 12, 13, 14, 15, 17, 18 (nos níveis 0 a 6).</li>
+                            </ul>
+                       </div>
+
+                       <!-- Alquimistas -->
+                        <div id="alquimistas" class="mb-8 scroll-mt-20">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-green-600 p-2 rounded-lg mr-3"><i class="fas fa-flask text-xl"></i></div>
+                                 <h3 class="text-xl font-bold text-green-300">Alquimistas</h3>
+                            </div>
+                             <ul class="list-disc pl-5 space-y-2">
+                                 <li>Alquimistas são muito versáteis. Suas habilidades podem ser usadas tanto em si quanto em aliados ou inimigos.</li>
+                                 <li>Alquimistas usam apenas <strong>4 cartas de postura</strong> do deck universal.</li>
+                                 <li>As habilidades de Alquimista se chamam <strong>poções, elixires</strong> e <strong>totens</strong>, e são os únicos tipos que eles podem utilizar.</li>
+                                 <li><strong>Poções</strong> têm efeito mais rápido e normalmente são descartadas após o uso; elas costumam ter apenas um efeito por poção, especialmente em níveis menores.</li>
+                                 <li><strong>Elixires</strong> são menos comuns entre as cartas dos alquimistas, mas são mais poderosos e duradouros. Seus efeitos podem variar, de acordo com o que o jogador declarar ao usar a habilidade.</li>
+                                 <li><strong>Totens</strong> são cartas de habilidade especiais em todos os níveis, a partir do 3, eles servem para causar efeitos passivos, normalmente em área.</li>
+                                 <li>Somente um totem pode ser utilizado por vez.</li>
+                                 <li>Apesar de o Alquimista ser um ótimo suporte, suas habilidades (especialmente as poções de dano em área) podem ser prejudiciais para o grupo, se não forem bem administradas.</li>
+                                 <li>Vida do Alquimista: 12, 13, 14, 15, 16, 17, 18 (nos níveis 0 a 6).</li>
+                             </ul>
+                        </div>
+
+                        <!-- Xamãs -->
+                        <div id="xamas" class="mb-8 scroll-mt-20">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-yellow-600 p-2 rounded-lg mr-3"><i class="fas fa-leaf text-xl"></i></div>
+                                 <h3 class="text-xl font-bold text-yellow-300">Xamãs</h3>
+                            </div>
+                             <ul class="list-disc pl-5 space-y-2">
+                                 <li>Misteriosos e fascinantes, os Xamãs são considerados os Magos ou Feiticeiros da natureza, embora o seu despertar para o Eu Mágico ocorra mais naturalmente, talvez pela comunhão com a vida selvagem, em suas sociedades tribais.</li>
+                                 <li>As habilidades xamânicas são, ao mesmo tempo, versáteis e únicas: eles podem invocar e até mesmo se transformar em animais selvagens, em níveis mais altos.</li>
+                                 <li>Xamãs usam <strong>5 cartas de postura</strong> do deck universal, mas não é muito comum que precisem utilizá-las.</li>
+                                 <li>As habilidades de Xamã se dividem em <strong>orações, magias da natureza</strong> e <strong>animais de poder</strong>.</li>
+                                 <li>As <strong>orações</strong> estão muito presentes nos níveis iniciais e são mais relacionadas à cura e ao fortalecimento.</li>
+                                 <li>As <strong>magias da natureza</strong>, um pouco mais presentes nos níveis finais, costumam mexer com o ambiente inteiro, afetando aliados e inimigos.</li>
+                                 <li>Os <strong>animais de poder</strong> estão presentes em todos os níveis e substituem as cartas de postura; por esta razão, apenas um animal de poder pode ser usado para esta finalidade por vez.</li>
+                                 <li>Estes mesmos <strong>animais de poder</strong> podem ser invocados, em vez de substituir a carta de posturas, cabe ao jogador declarar seu uso.</li>
+                                 <li>Nos níveis mais altos, os <strong>animais de poder</strong> permitem que o Xamã se transforme em um deles, adquirindo suas características vitais.</li>
+                                 <li>Xamãs têm <strong>cartas de habilidade especiais</strong> somente no nível 6, se tratando sempre de animais de poder.</li>
+                                 <li>As magias são muito objetivas e bastante sinérgicas entre si.</li>
+                                 <li>Vida do Xamã: 10 + vida do animal de poder ou 12 + Defesa da carta de posturas.</li>
+                             </ul>
+                              <p class="italic text-gray-400 mt-2">Obs.: Se a Vida máxima do Xamã for reduzida ou ampliada pela troca de carta de postura/animal de poder, a quantidade atual de Vida do Xamã permanecerá.</p>
+                             <div class="bg-gray-700 p-4 rounded-lg mt-4">
+                                <h4 class="font-bold text-yellow-300 mb-2">Exemplo de Vida do Xamã:</h4>
+                                <p>Xamã sofreu 5 de dano enquanto sua Vida máxima era 15, ou seja, está com 10 de Vida, temporariamente. Se a Vida máxima aumentar para 20 ou se a Vida máxima diminuir para 10, ela não será afetada, permanecendo em 10.</p>
+                             </div>
+                        </div>
+
+                        <!-- Monges -->
+                        <div id="monges" class="scroll-mt-20">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-teal-600 p-2 rounded-lg mr-3"><i class="fas fa-hand-peace text-xl"></i></div>
+                                 <h3 class="text-xl font-bold text-teal-300">Monges</h3>
+                            </div>
+                             <ul class="list-disc pl-5 space-y-2">
+                                 <li>Exímios combatentes, os Monges adquirem poderes de suas incontáveis divindades, que atuam tanto para o bem quanto para o mal.</li>
+                                 <li>Monges podem usar <strong>todas as cartas de postura disponíveis</strong> do deck universal, sendo obrigados a carregar pelo menos 4.</li>
+                                 <li>As habilidades de Monge se chamam <strong>mantras</strong>, mas alguns monges podem usar magias e outras habilidades de seus aliados ou inimigos.</li>
+                                 <li>Monges <strong>não têm cartas de habilidade especiais</strong>, mas podem comprar <strong>cartas de postura especiais</strong>, sem penalidade por isso (estas cartas definem as penalidades por classe).</li>
+                                 <li>Os <strong>mantras</strong> são muito focados nas cartas de postura, maximizando seu poder e permitindo, eventualmente, que o Monge carregue duas cartas de postura ao mesmo tempo.</li>
+                                 <li>Vida do Monge: <strong>10 + Defesa</strong> em todos os níveis.</li>
+                             </ul>
+                              <p class="italic text-gray-400 mt-2">Obs.: Se a Vida máxima do Monge for reduzida ou ampliada pela troca de carta de postura, a quantidade atual de Vida do Monge permanecerá.</p>
+                              <div class="bg-gray-700 p-4 rounded-lg mt-4">
+                                 <h4 class="font-bold text-teal-300 mb-2">Exemplo de Vida do Monge:</h4>
+                                 <p>Monge sofreu 5 de dano enquanto sua Vida máxima era 15, ou seja, está com 10 de Vida, temporariamente. Se a Vida máxima aumentar para 20 ou se a Vida máxima diminuir para 10, ela não será afetada, permanecendo em 10.</p>
+                              </div>
+                        </div>
+                 </div>
+             </section>
+
+
+             <!-- Glossário Section -->
+             <section id="glossario" class="mb-12 scroll-mt-20">
+                  <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                      <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                          <i class="fas fa-book mr-2"></i> Glossário e Palavras-Chave
+                      </h2>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                          <div>
+                              <p><strong class="text-yellow-300">Ação:</strong> Corresponde a uma das duas jogadas que são realizadas pelos heróis em seus turnos. Monstros padrão e elite realizam apenas uma ação, mas alguns chefes têm duas ações por turno.</p>
+                               <p><strong class="text-yellow-300">Alcance:</strong> [Definição não presente no texto original, manter como placeholder ou remover]</p>
+                               <p><strong class="text-yellow-300">Alvo:</strong> herói sofrer; no modo aventura, ela também corresponde ao movimento.</p>
+                               <p><strong class="text-yellow-300">Revelar:</strong> É o ato de mostrar uma carta do jogo, para que todos os jogadores possam ver.</p>
+                               <p><strong class="text-yellow-300">Prever:</strong> O jogador poderá prever a(s) próxima(s) carta(s) de seu deck, sem que isso conte como uma ação.</p>
+                               <p><strong class="text-yellow-300">Contemplar:</strong> O jogador poderá ver uma carta do jogo, de acordo com a descrição do efeito; isto normalmente conta como uma ação.</p>
+                                <p><strong class="text-yellow-300">Habilidade:</strong> [Termo genérico, definição implícita ao longo do manual]</p>
+                                <p><strong class="text-yellow-300">Postura:</strong> [Termo genérico, definição implícita ao longo do manual]</p>
+                                <p><strong class="text-yellow-300">Ataque:</strong> Descrito na carta de posturas, o Ataque é o valor usado em combate contra a Defesa do alvo.</p>
+                                <p><strong class="text-yellow-300">Defesa:</strong> Descrita na carta de posturas, a Defesa é descontada dos ataques que o herói sofrer.</p>
+                                <p><strong class="text-yellow-300">Bônus:</strong> [Termo genérico, definição implícita]</p>
+                                <p><strong class="text-yellow-300">Bônus de Ataque:</strong> [Definição na seção Atributos]</p>
+                                <p><strong class="text-yellow-300">Bônus de Defesa:</strong> [Definição na seção Atributos]</p>
+                                <p><strong class="text-yellow-300">Escudo:</strong> [Definição na seção Atributos]</p>
+                          </div>
+                           <div>
+                                <p><strong class="text-yellow-300">Monstro Padrão:</strong> [Definição na seção Cartas de Desafio]</p>
+                                <p><strong class="text-yellow-300">Monstro Elite:</strong> [Definição na seção Cartas de Desafio]</p>
+                                <p><strong class="text-yellow-300">Chefe:</strong> [Definição na seção Cartas de Desafio]</p>
+                                 <p><strong class="text-yellow-300">Modo de Jogo:</strong> [Não definido explicitamente no texto fornecido]</p>
+                                <p><strong class="text-yellow-300">Desafio:</strong> [Termo genérico, definição implícita]</p>
+                                <p><strong class="text-yellow-300">Despertar:</strong> [Definição na seção Magos]</p>
+                                <p><strong class="text-yellow-300">Turno:</strong> [Definição na seção Turnos e Ações]</p>
+                                <p><strong class="text-yellow-300">Na mão:</strong> [Termo genérico, definição implícita na seção Cartas de Habilidade]</p>
+                                 <p><strong class="text-yellow-300">Regra de Cenário:</strong> [Definição na seção Cartas de Cenário]</p>
+                                <p><strong class="text-yellow-300">Sala:</strong> [Definição na seção Cartas de Cenário]</p>
+                                <p><strong class="text-yellow-300">Nível:</strong> [Definição na seção Níveis de Cartas / XP]</p>
+                                <p><strong class="text-yellow-300">Grau:</strong> [Termo presente em exemplos de cartas, mas não definido no glossário]</p>
+                                <p><strong class="text-yellow-300">Duração:</strong> [Termo presente em exemplos de cartas, mas não definido no glossário]</p>
+                                <p><strong class="text-yellow-300">Condição:</strong> [Definição na seção Condições]</p>
+                                 <p><strong class="text-yellow-300">Atributo:</strong> [Definição na seção Atributos]</p>
+                                 <p><strong class="text-yellow-300">Atributo Básico:</strong> [Definição na seção Atributos]</p>
+                                <p><strong class="text-yellow-300">Atributo Secundário:</strong> [Definição na seção Atributos]</p>
+                                <p><strong class="text-yellow-300">Postura Utilitária:</strong> [Termo presente em exemplo de carta, não no glossário]</p>
+                                <p><strong class="text-yellow-300">Postura Ofensiva:</strong> [Termo presente em exemplo de carta, não no glossário]</p>
+                                <p><strong class="text-yellow-300">Postura Defensiva:</strong> [Termo presente em exemplo de carta, não no glossário]</p>
+                                <p><strong class="text-yellow-300">Combate:</strong> [Definição na seção Combate]</p>
+                                <p><strong class="text-yellow-300">Vida:</strong> [Definição na seção Atributos]</p>
+                                <p><strong class="text-yellow-300">Experiência:</strong> [Definição na seção Atributos / XP]</p>
+                                <p><strong class="text-yellow-300">Imóvel:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Atordoado:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Envenenado:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Ferido:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Mudo:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Cego:</strong> [Não definido no texto fornecido]</p>
+                                <p><strong class="text-yellow-300">Lento:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Exausto:</strong> [Definição na seção Condições]</p>
+                                <p><strong class="text-yellow-300">Sobrecarga:</strong> [Definição na seção Feiticeiros]</p>
+                                <p><strong class="text-yellow-300">Feitiço:</strong> [Definição na seção Feiticeiros]</p>
+                                <p><strong class="text-yellow-300">Magia:</strong> [Definição na seção Magos]</p>
+                                <p><strong class="text-yellow-300">Encantamento:</strong> [Definição na seção Bruxos]</p>
+                                 <p><strong class="text-yellow-300">Artefato Bruxo:</strong> [Definição na seção Bruxos]</p>
+                                <p><strong class="text-yellow-300">Poção:</strong> [Definição na seção Alquimistas]</p>
+                                 <p><strong class="text-yellow-300">Totem:</strong> [Definição na seção Alquimistas]</p>
+                                <p><strong class="text-yellow-300">Elixir:</strong> [Definição na seção Alquimistas]</p>
+                                <p><strong class="text-yellow-300">Oração:</strong> [Definição na seção Xamãs]</p>
+                                <p><strong class="text-yellow-300">Animal de Poder:</strong> [Definição na seção Xamãs]</p>
+                                <p><strong class="text-yellow-300">Mantra:</strong> [Definição na seção Monges]</p>
+                                <p><strong class="text-yellow-300">Sinergia:</strong> [Termo usado, não definido no glossário]</p>
+                                 <p><strong class="text-yellow-300">Custo:</strong> [Termo presente em exemplos de cartas, não definido no glossário]</p>
+                          </div>
+                      </div>
+                      <p class="mt-6 text-gray-400 italic">Note: Algumas palavras-chave foram inferidas do texto, mas não constavam explicitamente na seção "Glossário e Palavras-Chave" do manual original fornecido.</p>
+                  </div>
+              </section>
+
+
+            <!-- Quick Navigation Floating Button (Mobile) -->
+            <!-- Kept as is -->
+            <div class="lg:hidden fixed bottom-6 right-6 z-30">
+                <button id="quickNavBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                    <i class="fas fa-book-open text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Quick Navigation Modal (Mobile) -->
+             <!-- Updated links to match new sections -->
+            <div id="quickNavModal" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden flex items-center justify-center">
+                <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm mx-4 max-h-[80vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Navegação Rápida</h3>
+                        <button id="closeQuickNavModal" class="text-2xl text-gray-400 hover:text-gray-100">&times;</button>
+                    </div>
+                    <div class="space-y-2">
+                         <a href="#introducao" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Introdução</a>
+                         <a href="#visao-geral" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Visão Geral do Jogo</a>
+                         <a href="#preparacao" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Preparação do Jogo</a>
+                         <a href="#turnos-acoes" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Turnos e Ações</a>
+                         <a href="#cartas" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas do Jogo</a>
+                         <a href="#experiencia-progressao" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Experiência e Progressão</a>
+                         <a href="#atributos" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Atributos</a>
+                         <a href="#condicoes" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Condições</a>
+                         <a href="#combate" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Combate</a>
+                         <a href="#comportamento-monstros" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Comportamento dos Monstros</a>
+                         <a href="#morte" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Morte</a>
+                         <a href="#classes" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Classes</a>
+                         <a href="#glossario" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Glossário e Palavras-Chave</a>
+                     </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Arcana</h2>
+                    <p class="text-sm text-gray-400">Manual do Jogador - v1.0 (Protótipo Web)</p>
+                </div>
+                <!-- Social/Other Links - Placeholder -->
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-discord text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-gray-500 text-sm">
+                <p>© 2023 Nome do Criador/Editor. Baseado no manual original. Este é um documento de referência não oficial/protótipo.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchModal = document.getElementById('searchModal');
+        const closeSearchModal = document.getElementById('closeSearchModal');
+        const quickNavBtn = document.getElementById('quickNavBtn');
+        const quickNavModal = document.getElementById('quickNavModal');
+        const closeQuickNavModal = document.getElementById('closeQuickNavModal');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+             // Hide other modals if open
+            searchModal.classList.add('hidden');
+            quickNavModal.classList.add('hidden');
+        });
+
+        searchBtn.addEventListener('click', () => {
+            searchModal.classList.remove('hidden');
+             // Hide other modals if open
+            mobileMenu.classList.add('hidden');
+             quickNavModal.classList.add('hidden');
+        });
+
+        closeSearchModal.addEventListener('click', () => {
+            searchModal.classList.add('hidden');
+        });
+
+        // Event listener for closing mobile menu when clicking a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+
+        quickNavBtn.addEventListener('click', () => {
+            quickNavModal.classList.remove('hidden');
+             // Hide other modals if open
+             mobileMenu.classList.add('hidden');
+             searchModal.classList.add('hidden');
+        });
+
+        closeQuickNavModal.addEventListener('click', () => {
+            quickNavModal.classList.add('hidden');
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === searchModal) {
+                searchModal.classList.add('hidden');
+            }
+            if (e.target === quickNavModal) {
+                quickNavModal.classList.add('hidden');
+            }
+             // Do not close mobile menu when clicking outside, only via button or link click
+             // if (e.target === mobileMenu) {
+             //     mobileMenu.classList.add('hidden');
+             // }
+        });
+
+
+        // Highlight current section in sidebar
+        const sections = document.querySelectorAll('main section');
+        const navLinks = document.querySelectorAll('aside nav a');
+         const detailsElements = document.querySelectorAll('aside nav details');
+
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+
+                    // Remove active class from all links
+                    navLinks.forEach(link => {
+                        link.classList.remove('active-section');
+                        link.classList.remove('font-semibold'); // Remove potential bolding
+                        link.classList.add('font-normal');
+                         // Collapse all details except the one containing the active link
+                         detailsElements.forEach(detail => {
+                              if (!detail.contains(link)) { // Check if the link is NOT inside this details
+                                  detail.open = false;
+                              }
+                         });
+                    });
+
+                    // Add active class to the link corresponding to the intersecting section
+                    const targetLink = document.querySelector(`aside nav a[href="#${id}"]`);
+                    if (targetLink) {
+                        targetLink.classList.add('active-section');
+                        targetLink.classList.remove('font-normal');
+                        targetLink.classList.add('font-semibold'); // Add bolding for active
+
+                         // Open the parent details element if it exists
+                         const parentDetails = targetLink.closest('details');
+                         if (parentDetails) {
+                             parentDetails.open = true;
+                         }
+                    }
+                }
+            });
+        }, {
+            rootMargin: '0px 0px -50% 0px', // Trigger when section is 50% from top
+             threshold: 0 // Trigger as soon as any part is visible (combined with rootMargin)
+        });
+
+        // Observe each section
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- Handle manual details toggle for accessibility and fallback ---
+        // We use <details> native element now, simplified JS is needed just for highlighting logic if necessary
+        // The IntersectionObserver handles opening/closing details based on scroll position
+
+         // Smooth scrolling for navigation links
+         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    // Close mobile menu/modal if open
+                     mobileMenu.classList.add('hidden');
+                     quickNavModal.classList.add('hidden');
+                     searchModal.classList.add('hidden'); // Ensure search modal is also hidden
+
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // Adjust for fixed header height
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+
+    </script>
+</body>
+</html>
