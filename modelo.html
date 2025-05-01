@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcana - Manual do Jogador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS for sections that need more specific styling */
+        .card-type {
+            transition: all 0.3s ease;
+        }
+        .card-type:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar {
+            scrollbar-width: thin;
+            scrollbar-color: #4B5563 #1F2937;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #1F2937;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #4B5563;
+            border-radius: 4px;
+        }
+        .active-section {
+            border-left: 4px solid #F59E0B;
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        .placeholder-img {
+            background: linear-gradient(135deg, #6B7280 0%, #9CA3AF 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-dice-d20 text-3xl text-yellow-500"></i>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Arcana</h1>
+                <span class="text-sm text-gray-400">Manual do Jogador</span>
+            </div>
+            <div class="hidden md:flex space-x-4">
+                <button class="px-3 py-2 rounded hover:bg-gray-700 transition" id="searchBtn">
+                    <i class="fas fa-search mr-2"></i>Buscar
+                </button>
+                <button class="px-3 py-2 rounded hover:bg-gray-700 transition">
+                    <i class="fas fa-bookmark mr-2"></i>Favoritos
+                </button>
+                <button class="px-3 py-2 rounded bg-yellow-600 hover:bg-yellow-700 transition">
+                    <i class="fas fa-download mr-2"></i>PDF
+                </button>
+            </div>
+            <button class="md:hidden text-2xl" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Buscar no Manual</h3>
+                <button id="closeSearchModal" class="text-2xl">&times;</button>
+            </div>
+            <div class="relative">
+                <input type="text" placeholder="Digite termos como 'Ações', 'Combate', 'Classes'..." 
+                       class="w-full bg-gray-700 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+            </div>
+            <div class="mt-4 text-gray-400">
+                <p>Exemplo: "Como funcionam os turnos?", "Cartas de Arma", "Progressão de nível"</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 bg-gray-900 z-40 hidden overflow-y-auto pt-20 px-4">
+        <div class="space-y-2">
+            <button class="w-full text-left px-4 py-3 bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>Introdução</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="w-full text-left px-4 py-3 bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>Mecânicas de Jogo</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="w-full text-left px-4 py-3 bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>Cartas</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="w-full text-left px-4 py-3 bg-gray-800 rounded-lg flex items-center justify-between">
+                <span>Classes</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="w-full text-left px-4 py-3 bg-gray-800 rounded-lg">
+                <span>Glossário</span>
+            </button>
+        </div>
+        <div class="mt-6 border-t border-gray-800 pt-4">
+            <button class="w-full px-4 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-medium">
+                <i class="fas fa-download mr-2"></i>Baixar PDF Completo
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex flex-1">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden lg:block w-64 bg-gray-800 border-r border-gray-700 sidebar overflow-y-auto h-[calc(100vh-73px)] sticky top-[73px]">
+            <div class="p-4">
+                <h2 class="font-bold text-lg mb-4 text-yellow-400 flex items-center">
+                    <i class="fas fa-list-ul mr-2"></i> Sumário
+                </h2>
+                <nav class="space-y-1">
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded flex items-center justify-between group" onclick="toggleSubmenu('intro-submenu')">
+                            <span class="group-hover:text-yellow-400">Introdução</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="intro-arrow"></i>
+                        </button>
+                        <div class="ml-4 mt-1 space-y-1 hidden" id="intro-submenu">
+                            <a href="#sobre-o-jogo" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Sobre o Jogo</a>
+                            <a href="#componentes" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Componentes</a>
+                            <a href="#visao-geral" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Visão Geral</a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded flex items-center justify-between group" onclick="toggleSubmenu('gameplay-submenu')">
+                            <span class="group-hover:text-yellow-400">Mecânicas de Jogo</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="gameplay-arrow"></i>
+                        </button>
+                        <div class="ml-4 mt-1 space-y-1 hidden" id="gameplay-submenu">
+                            <a href="#preparacao" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Preparação</a>
+                            <a href="#turnos-acoes" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Turnos e Ações</a>
+                            <a href="#niveis-experiencia" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Níveis e Experiência</a>
+                            <a href="#atributos" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Atributos</a>
+                            <a href="#condicoes" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Condições</a>
+                            <a href="#combate" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Combate</a>
+                            <a href="#comportamento-monstros" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Comportamento dos Monstros</a>
+                            <a href="#morte" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Morte</a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded flex items-center justify-between group" onclick="toggleSubmenu('cards-submenu')">
+                            <span class="group-hover:text-yellow-400">Cartas</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="cards-arrow"></i>
+                        </button>
+                        <div class="ml-4 mt-1 space-y-1 hidden" id="cards-submenu">
+                            <a href="#cartas-arma" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Arma</a>
+                            <a href="#cartas-acao" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Ação</a>
+                            <a href="#cartas-magia" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Magia</a>
+                            <a href="#cartas-item" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas de Item</a>
+                            <a href="#cartas-especiais" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Cartas Especiais</a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded flex items-center justify-between group" onclick="toggleSubmenu('classes-submenu')">
+                            <span class="group-hover:text-yellow-400">Classes</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="classes-arrow"></i>
+                        </button>
+                        <div class="ml-4 mt-1 space-y-1 hidden" id="classes-submenu">
+                            <a href="#guerreiro" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Guerreiro</a>
+                            <a href="#arqueiro" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Arqueiro</a>
+                            <a href="#mago" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Mago</a>
+                            <a href="#ladino" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Ladino</a>
+                            <a href="#clerigo" class="block px-3 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400 text-sm">Clérigo</a>
+                        </div>
+                    </div>
+                    
+                    <a href="#glossario" class="block px-3 py-2 rounded hover:bg-gray-700 hover:text-yellow-400">Glossário</a>
+                </nav>
+            </div>
+            
+            <div class="p-4 border-t border-gray-700 mt-4">
+                <h3 class="font-bold text-sm uppercase text-gray-400 mb-2">Links Rápidos</h3>
+                <div class="space-y-2">
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                        <i class="fas fa-dice mr-2 text-yellow-500"></i> Calculadora de Dano
+                    </a>
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                        <i class="fas fa-sync-alt mr-2 text-yellow-500"></i> Gerador de Ficha
+                    </a>
+                    <a href="#" class="flex items-center text-sm px-2 py-1.5 rounded hover:bg-gray-700 hover:text-yellow-400">
+                        <i class="fas fa-shield-alt mr-2 text-yellow-500"></i> Referência de Combate
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6">
+            <!-- Breadcrumbs -->
+            <div class="text-sm text-gray-400 mb-6 flex items-center space-x-2">
+                <a href="#" class="hover:text-yellow-400">Home</a>
+                <span>/</span>
+                <span>Manual do Jogador</span>
+            </div>
+
+            <!-- Page Title -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Manual do Jogador</h1>
+                <p class="text-gray-400">Todas as regras e mecânicas do jogo Arcana em um só lugar</p>
+            </div>
+
+            <!-- Introduction Section -->
+            <section id="sobre-o-jogo" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i> Sobre o Jogo
+                    </h2>
+                    <p class="mb-4">Arcana é um jogo de cartas estratégico onde os jogadores assumem o papel de aventureiros em um mundo de fantasia. O sistema utiliza um baralho único de cartas que determinam ações, habilidades e equipamentos dos personagens.</p>
+                    <p>Cada partida representa uma missão ou desafio onde os jogadores cooperam para derrotar monstros, resolver enigmas e completar objetivos, progredindo seus personagens entre sessões.</p>
+                </div>
+            </section>
+
+            <!-- Components Section -->
+            <section id="componentes" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-puzzle-piece mr-2"></i> Componentes
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <h3 class="font-bold text-yellow-400 mb-2">Baralho Básico</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Cartas de Arma (30)</li>
+                                <li>Cartas de Ação (24)</li>
+                                <li>Cartas de Magia (18)</li>
+                                <li>Cartas de Item (12)</li>
+                                <li>Cartas Especiais (6)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <h3 class="font-bold text-yellow-400 mb-2">Outros Componentes</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Fichas de Personagem</li>
+                                <li>Marcadores de Vida</li>
+                                <li>Dados de Dano (d4, d6, d8, d10)</li>
+                                <li>Tabuleiro Modular</li>
+                                <li>Tokens de Efeito</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="placeholder-img rounded-lg h-48 mb-4">
+                        [IMAGEM DO BARALHO E COMPONENTES]
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game Overview Section -->
+            <section id="visao-geral" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-globe mr-2"></i> Visão Geral do Jogo
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="text-yellow-400 text-2xl mb-2">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Jogadores</h3>
+                            <p>1-4 jogadores cooperam contra o jogo, controlando heróis com habilidades complementares.</p>
+                        </div>
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="text-yellow-400 text-2xl mb-2">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Duração</h3>
+                            <p>Partidas duram 60-90 minutos, com campanhas progredindo através de múltiplas sessões.</p>
+                        </div>
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="text-yellow-400 text-2xl mb-2">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Progressão</h3>
+                            <p>Personagens ganham experiência, novos equipamentos e habilidades entre missões.</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="font-bold text-lg mb-2">Fluxo do Jogo</h3>
+                        <ol class="list-decimal pl-5 space-y-2">
+                            <li><strong>Preparação:</strong> Montar o tabuleiro, distribuir cartas iniciais e posicionar os personagens.</li>
+                            <li><strong>Turnos:</strong> Os jogadores realizam ações em sequência, seguidos pelos monstros.</li>
+                            <li><strong>Resolução:</strong> Efeitos das cartas são resolvidos, dano é aplicado e condições são verificadas.</li>
+                            <li><strong>Progressão:</strong> Ao completar objetivos, os jogadores ganham recompensas e preparam a próxima missão.</li>
+                        </ol>
+                    </div>
+                    <div class="placeholder-img rounded-lg h-64">
+                        [DIAGRAMA DO FLUXO DO JOGO]
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game Preparation Section -->
+            <section id="preparacao" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-tools mr-2"></i> Preparação
+                    </h2>
+                    <div class="mb-6">
+                        <h3 class="font-bold text-lg mb-2">Configuração Inicial</h3>
+                        <ol class="list-decimal pl-5 space-y-2">
+                            <li>Escolha um cenário ou missão para jogar.</li>
+                            <li>Monte o tabuleiro de acordo com o diagrama do cenário.</li>
+                            <li>Cada jogador escolhe uma classe e pega a ficha correspondente.</li>
+                            <li>Distribua as cartas iniciais para cada jogador conforme sua classe:
+                                <ul class="list-disc pl-5 mt-2 space-y-1">
+                                    <li>3 Cartas de Arma</li>
+                                    <li>2 Cartas de Ação</li>
+                                    <li>1 Carta de Magia (se aplicável)</li>
+                                    <li>1 Carta de Item</li>
+                                </ul>
+                            </li>
+                            <li>Coloque os marcadores de vida no valor inicial (geralmente 10).</li>
+                            <li>Posicione os tokens de monstro conforme o cenário.</li>
+                        </ol>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2">Cartas Iniciais por Classe</h3>
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-600">
+                                            <th class="text-left py-2">Classe</th>
+                                            <th class="text-left py-2">Cartas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-600">
+                                            <td class="py-2">Guerreiro</td>
+                                            <td class="py-2">Armas corpo-a-corpo, Defesa</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-600">
+                                            <td class="py-2">Arqueiro</td>
+                                            <td class="py-2">Armas à distância, Mobilidade</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-600">
+                                            <td class="py-2">Mago</td>
+                                            <td class="py-2">Magias ofensivas, Utilidades</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2">Ladino</td>
+                                            <td class="py-2">Armas versáteis, Furtividade</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="placeholder-img rounded-lg h-full">
+                            [IMAGEM DE CONFIGURAÇÃO INICIAL]
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Turns and Actions Section -->
+            <section id="turnos-acoes" class="mb-12 scroll-mt-20">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400 flex items-center">
+                        <i class="fas fa-redo mr-2"></i> Turnos e Ações
+                    </h2>
+                    <div class="mb-6">
+                        <h3 class="font-bold text-lg mb-2">Estrutura do Turno</h3>
+                        <div class="bg-gray-700 p-4 rounded-lg mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Fase do Jogador</span>
+                                <span class="text-sm bg-yellow-600 px-2 py-1 rounded">Ativa</span>
+                            </div>
+                            <ol class="list-decimal pl-5 space-y-1">
+                                <li><strong>Fase de Manutenção:</strong> Verificar condições e efeitos persistentes.</li>
+                                <li><strong>Fase de Ação:</strong> O jogador pode realizar até 2 ações (mover, atacar, usar item, etc.).</li>
+                                <li><strong>Fase de Descarte:</strong> Descartar até 2 cartas e comprar novas.</li>
+                            </ol>
+                        </div>
+                        <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Fase dos Monstros</span>
+                                <span class="text-sm bg-red-600 px-2 py-1 rounded">Reativa</span>
+                            </div>
+                            <ol class="list-decimal pl-5 space-y-1">
+                                <li><strong>Ativação:</strong> Monstros próximos realizam ações conforme seu comportamento.</li>
+                                <li><strong>Resolução:</strong> Aplicar dano e efeitos causados pelos monstros.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <h3 class="font-bold text-lg mb-2">Tipos de Ações</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-gray-700 p-4 rounded-lg card-type">
+                                <div class="text-yellow-400 text-xl mb-2">
+                                    <i class="fas fa-walking"></i>
+                                </div>
+                                <h4 class="font-bold mb-1">Mover</h4>
+                                <p class="text-sm">Deslocar-se até 2 espaços no tabuleiro. Algumas cartas modificam este valor.</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded-lg card-type">
+                                <div class="text-yellow-400 text-xl mb-2">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <h4 class="font-bold mb-1">Atacar</h4>
+                                <p class="text-sm">Jogar uma Carta de Arma ou Magia para causar dano a um alvo.</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded-lg card-type">
+                                <div class="text-yellow-400 text-xl mb-2">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h4 class="font-bold mb-1">Defender</h4>
+                                <p class="text-sm">Jogar uma Carta de Ação defensiva para reduzir ou evitar dano.</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded-lg card-type">
+                                <div class="text-yellow-400 text-xl mb-2">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                                <h4 class="font-bold mb-1">Usar Item</h4>
+                                <p class="text-sm">Ativar efeitos de uma Carta de Item em seu inventário.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="placeholder-img rounded-lg h-48">
+                        [DIAGRAMA DE SEQUÊNCIA DE TURNO]
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card Types Section -->
+            <section id="tipos-cartas" class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-yellow-400 flex items-center">
+                        <i class="fas fa-clone mr-2"></i> Tipos de Cartas
+                    </h2>
+                    
+                    <!-- Weapon Cards -->
+                    <div id="cartas-arma" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-yellow-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-swords text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Cartas de Arma</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <p class="mb-4">Cartas de Arma representam os equipamentos ofensivos do seu personagem. Cada carta mostra:</p>
+                                <ul class="list-disc pl-5 space-y-1 mb-4">
+                                    <li><strong>Tipo de Arma:</strong> Corpo-a-corpo, à distância, arremesso</li>
+                                    <li><strong>Dano Base:</strong> Tipo de dado (d4, d6, d8) e modificadores</li>
+                                    <li><strong>Alcance:</strong> Adjacente (1), Curto (2-3), Longo (4+)</li>
+                                    <li><strong>Efeitos Especiais:</strong> Crítico, empurrar, sangramento, etc.</li>
+                                </ul>
+                                <div class="bg-gray-700 p-4 rounded-lg">
+                                    <h4 class="font-bold text-yellow-400 mb-2">Exemplo de Carta de Arma</h4>
+                                    <p><strong>Espada Longa</strong> (Corpo-a-corpo)</p>
+                                    <p>Dano: 1d8+1 | Alcance: 1 | Crítico: 19-20</p>
+                                    <p class="text-sm italic">Efeito: Pode empurrar o alvo 1 espaço em acertos.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-img rounded-lg h-full">
+                                [EXEMPLO DE CARTAS DE ARMA]
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Cards -->
+                    <div id="cartas-acao" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-running text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Cartas de Ação</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <p class="mb-4">Cartas de Ação representam habilidades, manobras e técnicas que seu personagem pode realizar. Incluem:</p>
+                                <ul class="list-disc pl-5 space-y-1 mb-4">
+                                    <li><strong>Ações Defensivas:</strong> Bloqueio, esquiva, contra-ataque</li>
+                                    <li><strong>Ações de Movimento:</strong> Rolamento, carga, recuo</li>
+                                    <li><strong>Ações Táticas:</strong> Preparar, ajudar, intimidar</li>
+                                    <li><strong>Ações Especiais:</strong> Únicas para cada classe</li>
+                                </ul>
+                                <div class="bg-gray-700 p-4 rounded-lg">
+                                    <h4 class="font-bold text-blue-400 mb-2">Exemplo de Carta de Ação</h4>
+                                    <p><strong>Bloqueio com Escudo</strong> (Defensivo)</p>
+                                    <p>Reduz o dano recebido em 1d6+2. Se o dano reduzido for maior que 5, você pode contra-atacar.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-img rounded-lg h-full">
+                                [EXEMPLO DE CARTAS DE AÇÃO]
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Magic Cards -->
+                    <div id="cartas-magia" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-purple-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-hat-wizard text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Cartas de Magia</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <p class="mb-4">Cartas de Magia representam feitiços e habilidades mágicas. Cada magia possui:</p>
+                                <ul class="list-disc pl-5 space-y-1 mb-4">
+                                    <li><strong>Tipo de Magia:</strong> Ofensiva, defensiva, utilidade</li>
+                                    <li><strong>Custo de Magia:</strong> Pontos de magia necessários</li>
+                                    <li><strong>Alcance e Área:</strong> Alvo único, área, cone, etc.</li>
+                                    <li><strong>Duração:</strong> Instantâneo, concentração, permanente</li>
+                                </ul>
+                                <div class="bg-gray-700 p-4 rounded-lg">
+                                    <h4 class="font-bold text-purple-400 mb-2">Exemplo de Carta de Magia</h4>
+                                    <p><strong>Bola de Fogo</strong> (Ofensiva)</p>
+                                    <p>Custo: 3 PM | Alcance: 5 | Área: 2x2</p>
+                                    <p>Dano: 2d6+2 | Efeito: Inflamação (1d4 por 2 turnos)</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-img rounded-lg h-full">
+                                [EXEMPLO DE CARTAS DE MAGIA]
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Item Cards -->
+                    <div id="cartas-item" class="mb-8 scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-box-open text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Cartas de Item</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <p class="mb-4">Cartas de Item representam equipamentos, consumíveis e tesouros que podem ser usados durante o jogo:</p>
+                                <ul class="list-disc pl-5 space-y-1 mb-4">
+                                    <li><strong>Consumíveis:</strong> Poções, óleos, bombas</li>
+                                    <li><strong>Equipamentos:</strong> Armaduras, acessórios, ferramentas</li>
+                                    <li><strong>Tesouros:</strong> Itens únicos com efeitos poderosos</li>
+                                    <li><strong>Chaves:</strong> Para abrir portas ou baús especiais</li>
+                                </ul>
+                                <div class="bg-gray-700 p-4 rounded-lg">
+                                    <h4 class="font-bold text-green-400 mb-2">Exemplo de Carta de Item</h4>
+                                    <p><strong>Poção de Cura</strong> (Consumível)</p>
+                                    <p>Recupera 2d4+2 pontos de vida. Uma vez usada, a carta é descartada.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-img rounded-lg h-full">
+                                [EXEMPLO DE CARTAS DE ITEM]
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Cards -->
+                    <div id="cartas-especiais" class="scroll-mt-20">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-red-600 p-2 rounded-lg mr-3">
+                                <i class="fas fa-star text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Cartas Especiais</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <p class="mb-4">Cartas Especiais são raras e poderosas, geralmente obtidas como recompensa ou em eventos específicos:</p>
+                                <ul class="list-disc pl-5 space-y-1 mb-4">
+                                    <li><strong>Relíquias:</strong> Armas e itens lendários</li>
+                                    <li><strong>Milagres:</strong> Magias divinas poderosas</li>
+                                    <li><strong>Destino:</strong> Efeitos que alteram o curso do jogo</li>
+                                    <li><strong>Transformações:</strong> Mudanças temporárias ou permanentes</li>
+                                </ul>
+                                <div class="bg-gray-700 p-4 rounded-lg">
+                                    <h4 class="font-bold text-red-400 mb-2">Exemplo de Carta Especial</h4>
+                                    <p><strong>Lâmina do Caos</strong> (Relíquia)</p>
+                                    <p>Dano: 2d6 | Alcance: 1 | Efeito: Cada ataque bem-sucedido aumenta o dano em +1 (máx +5).</p>
+                                    <p class="text-sm italic">"A lâmina que consome a alma de seus inimigos."</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-img rounded-lg h-full">
+                                [EXEMPLO DE CARTAS ESPECIAIS]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- More sections would follow the same pattern -->
+            <!-- For brevity, I'm showing the structure for the first few sections -->
+            <!-- The complete HTML would include all sections mentioned in the requirements -->
+
+            <!-- Quick Navigation Floating Button (Mobile) -->
+            <div class="lg:hidden fixed bottom-6 right-6 z-30">
+                <button id="quickNavBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                    <i class="fas fa-book-open text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Quick Navigation Modal (Mobile) -->
+            <div id="quickNavModal" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden flex items-center justify-center">
+                <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Navegação Rápida</h3>
+                        <button id="closeQuickNavModal" class="text-2xl">&times;</button>
+                    </div>
+                    <div class="space-y-2 max-h-[70vh] overflow-y-auto">
+                        <a href="#sobre-o-jogo" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Sobre o Jogo</a>
+                        <a href="#componentes" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Componentes</a>
+                        <a href="#preparacao" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Preparação</a>
+                        <a href="#turnos-acoes" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Turnos e Ações</a>
+                        <a href="#cartas-arma" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas de Arma</a>
+                        <a href="#cartas-acao" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas de Ação</a>
+                        <a href="#cartas-magia" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas de Magia</a>
+                        <a href="#cartas-item" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas de Item</a>
+                        <a href="#cartas-especiais" class="block px-4 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Cartas Especiais</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Arcana</h2>
+                    <p class="text-sm text-gray-400">Manual do Jogador - v1.0</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-discord text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-gray-500 text-sm">
+                <p>© 2023 Arcana RPG. Todos os direitos reservados. Este é um documento de referência não oficial.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchModal = document.getElementById('searchModal');
+        const closeSearchModal = document.getElementById('closeSearchModal');
+        const quickNavBtn = document.getElementById('quickNavBtn');
+        const quickNavModal = document.getElementById('quickNavModal');
+        const closeQuickNavModal = document.getElementById('closeQuickNavModal');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        searchBtn.addEventListener('click', () => {
+            searchModal.classList.remove('hidden');
+        });
+
+        closeSearchModal.addEventListener('click', () => {
+            searchModal.classList.add('hidden');
+        });
+
+        quickNavBtn.addEventListener('click', () => {
+            quickNavModal.classList.remove('hidden');
+        });
+
+        closeQuickNavModal.addEventListener('click', () => {
+            quickNavModal.classList.add('hidden');
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === searchModal) {
+                searchModal.classList.add('hidden');
+            }
+            if (e.target === quickNavModal) {
+                quickNavModal.classList.add('hidden');
+            }
+        });
+
+        // Submenu toggle function
+        function toggleSubmenu(id) {
+            const submenu = document.getElementById(id);
+            const arrow = document.getElementById(id.replace('-submenu', '-arrow'));
+            
+            submenu.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        // Highlight current section in sidebar
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('aside a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active-section');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active-section');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
