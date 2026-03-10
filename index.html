@@ -5,56 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tarô Quebrado</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Estilos customizados (esconder scrollbar) -->
   <style>
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 
-  <!-- React e ReactDOM (Versão 18) -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Babel para compilar o JSX no navegador -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-  
-  <!-- Onde o React vai ser renderizado -->
   <div id="root"></div>
 
-  <!-- Nosso código React -->
   <script type="text/babel">
     const { useState, useRef, useEffect } = React;
 
-    // --- ÍCONES (Substituindo o Lucide-react para rodar sem NPM) ---
-    const Plus = ({ size = 24, className = "" }) => (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-    );
-    const Search = ({ size = 24, className = "" }) => (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    );
-    const GripVertical = ({ size = 24, className = "" }) => (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
-    );
-    const ArrowRightLeft = ({ size = 24, className = "" }) => (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="16 3 21 8 16 13"></polyline><line x1="21" y1="8" x2="3" y2="8"></line><polyline points="8 21 3 16 8 11"></polyline><line x1="3" y1="16" x2="21" y2="16"></line></svg>
-    );
+    // --- ÍCONES ---
+    const Plus = ({ size = 24, className = "" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
+    const Search = ({ size = 24, className = "" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
+    const GripVertical = ({ size = 24, className = "" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>;
+    const ArrowRightLeft = ({ size = 24, className = "" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="16 3 21 8 16 13"></polyline><line x1="21" y1="8" x2="3" y2="8"></line><polyline points="8 21 3 16 8 11"></polyline><line x1="3" y1="16" x2="21" y2="16"></line></svg>;
 
-    // --- COMPONENTE PRINCIPAL ---
     function TaroQuebrado() {
+      const [database, setDatabase] = useState([]);
+      const [isLoading, setIsLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      // Timeline começa com O Mago e A Papisa como exemplo (baseado nos IDs do seu JSON)
       const [timeline, setTimeline] = useState([
-        { id: 'mago', num: 'I', name: 'O Mago' },
-        { id: 'imperador', num: 'IV', name: 'O Imperador' },
-        { id: 'diabo', num: 'XV', name: 'O Diabo' },
+        { id: '1', name: 'O Mago' },
+        { id: '2', name: 'A Papisa' },
       ]);
 
       const [isModalOpen, setIsModalOpen] = useState(false);
+      const [searchTerm, setSearchTerm] = useState("");
       const carouselRef = useRef(null);
 
+      // BUSCAR O JSON AO CARREGAR A PÁGINA
+      useEffect(() => {
+        fetch('contas.json')
+          .then(res => {
+            if (!res.ok) throw new Error("Falha ao carregar contas.json");
+            return res.json();
+          })
+          .then(data => {
+            setDatabase(data);
+            setIsLoading(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setError(err.message);
+            setIsLoading(false);
+          });
+      }, []);
+
+      // Navegação por teclado (Setas)
       useEffect(() => {
         const handleKeyDown = (e) => {
           if (e.key === 'ArrowRight' && carouselRef.current) {
@@ -75,34 +82,41 @@
         setTimeline(newTimeline);
       };
 
+      const addToTimeline = (card) => {
+        setTimeline([...timeline, { id: card.id, name: card.name }]);
+        setIsModalOpen(false);
+        setSearchTerm("");
+      };
+
+      // Função para encontrar a interação entre Carta A e Carta B
+      const getInteraction = (cardAId, cardBId) => {
+        const sourceCard = database.find(c => c.id === cardAId);
+        if (!sourceCard || !sourceCard.interactions) return null;
+        return sourceCard.interactions.find(i => i.target_id === cardBId);
+      };
+
+      if (isLoading) return <div className="h-screen flex items-center justify-center font-mono bg-black text-white">Carregando_Database.exe...</div>;
+      if (error) return <div className="h-screen flex items-center justify-center font-mono bg-red-600 text-white">ERRO CRÍTICO: {error} (Verifique se contas.json existe no servidor)</div>;
+
+      // Filtrar cartas para o Modal
+      const filteredCards = database.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
       return (
         <div className="flex flex-col h-screen w-full bg-white text-black font-sans overflow-hidden selection:bg-black selection:text-white">
           
+          {/* HEADER FIXO */}
           <header className="flex-shrink-0 border-b-4 border-black p-4 bg-white z-10 flex items-center gap-2 overflow-x-auto hide-scrollbar">
-            
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="flex-shrink-0 h-16 w-16 flex items-center justify-center border-2 border-dashed border-black hover:bg-black hover:text-white transition-colors cursor-pointer"
-            >
-              <Plus size={24} />
-            </button>
-
             {timeline.map((card, idx) => {
               const isActive = idx === 0 || idx === 1; 
 
               return (
-                <div key={card.id} className="flex items-center gap-2 flex-shrink-0">
+                <div key={`${card.id}-${idx}`} className="flex items-center gap-2 flex-shrink-0">
                   <div 
-                    className={`
-                      relative flex flex-col justify-center px-4 h-16 border-2 border-black
-                      font-mono uppercase tracking-tighter cursor-grab active:cursor-grabbing
-                      transition-all duration-200
-                      ${isActive ? 'opacity-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white' : 'opacity-40 border-dashed'}
-                    `}
+                    className={`relative flex flex-col justify-center px-4 h-16 border-2 border-black font-mono uppercase tracking-tighter cursor-grab active:cursor-grabbing transition-all duration-200 ${isActive ? 'opacity-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white' : 'opacity-40 border-dashed'}`}
                   >
                     <div className="flex items-center gap-2">
                       <GripVertical size={16} className="opacity-50" />
-                      <span className="font-bold">{card.num}.</span>
+                      <span className="font-bold">{card.id}.</span>
                       <span>{card.name}</span>
                     </div>
                   </div>
@@ -111,7 +125,6 @@
                     <button 
                       onClick={() => swapCards(idx, idx + 1)}
                       className="p-2 border-2 border-black hover:bg-black hover:text-white transition-colors rotate-90 md:rotate-0"
-                      title="Inverter Cartas"
                     >
                       <ArrowRightLeft size={16} />
                     </button>
@@ -122,65 +135,81 @@
 
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="flex-shrink-0 h-16 w-16 flex items-center justify-center border-2 border-dashed border-black hover:bg-black hover:text-white transition-colors cursor-pointer"
+              className="flex-shrink-0 h-16 w-16 flex items-center justify-center border-2 border-dashed border-black hover:bg-black hover:text-white transition-colors cursor-pointer bg-gray-50"
             >
               <Plus size={24} />
             </button>
           </header>
 
-          <main 
-            ref={carouselRef}
-            className="flex-1 flex overflow-x-auto snap-x snap-mandatory"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            {[0, 1].map((pairIndex) => {
-              if (pairIndex + 1 >= timeline.length) return null;
+          {/* ÁREA PRINCIPAL */}
+          <main ref={carouselRef} className="flex-1 flex overflow-x-auto snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
+            {timeline.map((card, idx) => {
+              if (idx + 1 >= timeline.length) return null;
               
-              const cardA = timeline[pairIndex];
-              const cardB = timeline[pairIndex + 1];
+              const cardA = timeline[idx];
+              const cardB = timeline[idx + 1];
+              
+              // Busca os dados reais de leitura
+              const interactionData = getInteraction(cardA.id, cardB.id);
 
               return (
-                <article 
-                  key={`pair-${pairIndex}`}
-                  className="w-full h-full flex-shrink-0 snap-center overflow-y-auto border-r-4 border-black"
-                >
+                <article key={`pair-${idx}`} className="w-full h-full flex-shrink-0 snap-center overflow-y-auto border-r-4 border-black">
+                  
+                  {/* Título do Slide */}
                   <div className="sticky top-0 bg-white border-b-4 border-black p-6 z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <h1 className="font-serif text-3xl md:text-5xl font-black leading-none tracking-tight">
                       {cardA.name} <br/>
                       <span className="text-gray-400">×</span> {cardB.name}
                     </h1>
                     <span className="font-mono text-xs uppercase border-2 border-black px-2 py-1 bg-black text-white self-start md:self-auto">
-                      Combinação Estrutural
+                      Combinação #{cardA.id}-{cardB.id}
                     </span>
                   </div>
 
                   <div className="p-6 md:p-12 md:max-w-3xl font-serif text-lg leading-relaxed space-y-12">
-                    <section>
-                      <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
-                        [01] Tensão Primária
-                      </h2>
-                      <p>A iniciativa manifesta ({cardA.num}) colide com a estrutura estabelecida ({cardB.num}). Aqui, a vontade pura não é suficiente; ela precisa ser contida e organizada pelas leis do mundo material. É o rascunho caótico encontrando a malha da engenharia.</p>
-                    </section>
+                    {interactionData ? (
+                      <>
+                        <section>
+                          <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
+                            [+] Engendrar
+                          </h2>
+                          <p>{interactionData.dynamics.engendrar}</p>
+                        </section>
 
-                    <section>
-                      <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
-                        [02] Resolução Prática
-                      </h2>
-                      <p>Existe uma fricção óbvia. Para que a ideia do Mago sobreviva, o Imperador exige um sistema. A leitura sugere a construção de limites rígidos temporários para abrigar um processo criativo intenso. Não tente subverter o sistema agora; use-o como alavanca.</p>
-                      <p className="mt-4">O risco dessa dinâmica é a paralisia burocrática esmagando a fagulha inicial antes que ela tome forma utilitária.</p>
-                    </section>
+                        <section>
+                          <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4 text-red-600 border-red-600">
+                            [!] Conflito
+                          </h2>
+                          <p>{interactionData.dynamics.conflito}</p>
+                        </section>
 
-                    <section>
-                      <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
-                        [03] O Ponto Cego
-                      </h2>
-                      <p>A ilusão do controle. Acreditar que o ímpeto inicial pode ser totalmente domado. Há uma energia residual aqui que escapará da estrutura se não houver válvulas de escape programadas no plano.</p>
-                      <div className="mt-6 p-4 border-l-4 border-black bg-gray-50 text-base font-mono">
-                        <span className="block text-red-600 font-bold mb-2">ERRO SISTÊMICO ENCONTRADO:</span>
-                        Não confundir a autoridade sobre o método com a autoridade sobre o resultado.
+                        <section>
+                          <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
+                            [=] Estagnar
+                          </h2>
+                          <p>{interactionData.dynamics.estagnar}</p>
+                        </section>
+
+                        <section>
+                          <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
+                            [<] Regressar
+                          </h2>
+                          <p>{interactionData.dynamics.regressar}</p>
+                        </section>
+
+                        <section>
+                          <h2 className="font-mono text-sm uppercase font-bold tracking-widest border-b-2 border-black pb-2 mb-4">
+                            [>] Necessitar
+                          </h2>
+                          <p>{interactionData.dynamics.necessitar}</p>
+                        </section>
+                      </>
+                    ) : (
+                      <div className="p-8 border-4 border-dashed border-gray-300 text-gray-500 font-mono text-center">
+                        <p className="text-xl mb-2">DADOS_NAO_ENCONTRADOS</p>
+                        <p className="text-sm">O cruzamento entre "{cardA.name}" e "{cardB.name}" ainda não consta no banco de dados.</p>
                       </div>
-                    </section>
-                    
+                    )}
                     <div className="h-32"></div> 
                   </div>
                 </article>
@@ -188,42 +217,45 @@
             })}
           </main>
 
+          {/* MODAL DE BUSCA */}
           {isModalOpen && (
             <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col max-h-[80vh]">
                 
                 <div className="p-4 border-b-4 border-black flex items-center justify-between bg-black text-white">
-                  <span className="font-mono uppercase tracking-widest text-sm">Adicionar_Carta.exe</span>
+                  <span className="font-mono uppercase tracking-widest text-sm">Biblioteca_de_Cartas.exe</span>
                   <button onClick={() => setIsModalOpen(false)} className="font-mono hover:text-red-500">
                     [X]
                   </button>
                 </div>
 
-                <div className="p-4 border-b-4 border-black relative">
+                <div className="p-4 border-b-4 border-black relative bg-gray-50">
                   <div className="absolute left-4 top-4 text-gray-400">
                     <Search size={20} />
                   </div>
                   <input 
                     autoFocus
                     type="text" 
-                    placeholder="Digite o nome ou número..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Filtrar por nome..." 
                     className="w-full border-2 border-black font-mono p-3 pl-10 focus:outline-none focus:bg-yellow-100 transition-colors placeholder:text-gray-400 uppercase text-sm"
                   />
                 </div>
 
                 <ul className="flex-1 overflow-y-auto font-mono text-sm">
-                  <li className="p-4 border-b-2 border-dashed border-black hover:bg-black hover:text-white cursor-pointer flex justify-between">
-                    <span>II. A Sacerdotisa</span>
-                    <span className="text-gray-400 opacity-50">+ ADD</span>
-                  </li>
-                  <li className="p-4 border-b-2 border-dashed border-black hover:bg-black hover:text-white cursor-pointer flex justify-between">
-                    <span>III. A Imperatriz</span>
-                    <span className="text-gray-400 opacity-50">+ ADD</span>
-                  </li>
-                  <li className="p-4 border-b-2 border-dashed border-black hover:bg-black hover:text-white cursor-pointer flex justify-between text-red-600">
-                    <span>XVI. A Torre</span>
-                    <span className="opacity-50">+ ADD</span>
-                  </li>
+                  {filteredCards.length > 0 ? filteredCards.map(card => (
+                    <li 
+                      key={card.id} 
+                      onClick={() => addToTimeline(card)}
+                      className="p-4 border-b-2 border-dashed border-gray-300 hover:border-black hover:bg-black hover:text-white cursor-pointer flex justify-between group transition-colors"
+                    >
+                      <span>{card.id}. {card.name}</span>
+                      <span className="text-gray-400 group-hover:text-white opacity-50">+ INSERIR</span>
+                    </li>
+                  )) : (
+                    <li className="p-4 text-gray-400 text-center">Nenhuma carta encontrada.</li>
+                  )}
                 </ul>
               </div>
             </div>
@@ -232,7 +264,6 @@
       );
     }
 
-    // --- RENDERIZAÇÃO ---
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<TaroQuebrado />);
   </script>
